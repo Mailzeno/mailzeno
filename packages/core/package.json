@@ -1,0 +1,56 @@
+{
+  "name": "@mailzeno/core",
+  "version": "0.3.0",
+  "description": "SMTP engine for MailZeno",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean"
+  },
+  "keywords": [
+    "smtp",
+    "email",
+    "mailzeno",
+    "email-engine",
+    "transactional-email"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mailzeno/mailzeno.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mailzeno/mailzeno/issues"
+  },
+  "homepage": "https://github.com/mailzeno/mailzeno#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "dependencies": {
+    "@react-email/render": "^2.0.4",
+    "nodemailer": "^8.0.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}

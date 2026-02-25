@@ -1,0 +1,196 @@
+# Error Codes
+
+Mailzeno provides structured errors at every layer — the SDK, the REST API, and the core SMTP engine. All errors return a consistent JSON response.
+
+## Error response format
+
+All error responses follow a consistent structure:
+
+<CodeBlock language="json" title="Error Response">
+{`{
+  "error": "Human readable error message",
+  "code": "error_code_string"
+}`}
+</CodeBlock>
+
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>error</code></td>
+      <td>string</td>
+      <td>Human-readable error description</td>
+    </tr>
+    <tr>
+      <td><code>code</code></td>
+      <td>string</td>
+      <td>Machine-readable error code</td>
+    </tr>
+  </tbody>
+</table>
+
+## API error codes
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Code</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>missing_required_fields</code></td>
+      <td><code>smtpId</code>, <code>from</code>, or <code>to</code> is missing</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>missing_email_content</code></td>
+      <td>No subject/html and no template specified</td>
+    </tr>
+    <tr>
+      <td><code>401</code></td>
+      <td><code>invalid_auth_header</code></td>
+      <td>Missing or malformed Authorization header</td>
+    </tr>
+    <tr>
+      <td><code>401</code></td>
+      <td><code>invalid_api_key</code></td>
+      <td>API key is invalid or has been deactivated</td>
+    </tr>
+    <tr>
+      <td><code>429</code></td>
+      <td><code>rate_limit_exceeded</code></td>
+      <td>Too many requests (check <code>retry-after</code> header)</td>
+    </tr>
+    <tr>
+      <td><code>500</code></td>
+      <td><code>profile_not_found</code></td>
+      <td>User profile could not be located</td>
+    </tr>
+    <tr>
+      <td><code>500</code></td>
+      <td><code>email_send_failed</code></td>
+      <td>SMTP sending failed</td>
+    </tr>
+    <tr>
+      <td><code>500</code></td>
+      <td><code>internal_server_error</code></td>
+      <td>Unexpected server error</td>
+    </tr>
+  </tbody>
+</table>
+
+## Core engine error codes
+
+The `@mailzeno/core` SMTP engine provides specific error classes for SMTP-level failures:
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Class</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>VALIDATION_ERROR</code></td>
+      <td><code>ValidationError</code></td>
+      <td>Invalid input (missing from, to, or subject)</td>
+    </tr>
+    <tr>
+      <td><code>RENDER_ERROR</code></td>
+      <td><code>RenderError</code></td>
+      <td>React email rendering failed</td>
+    </tr>
+    <tr>
+      <td><code>SMTP_CONNECTION_ERROR</code></td>
+      <td><code>SMTPConnectionError</code></td>
+      <td>Could not connect to SMTP server</td>
+    </tr>
+    <tr>
+      <td><code>SMTP_AUTH_ERROR</code></td>
+      <td><code>SMTPAuthError</code></td>
+      <td>SMTP authentication failed (wrong credentials)</td>
+    </tr>
+    <tr>
+      <td><code>SMTP_RESPONSE_ERROR</code></td>
+      <td><code>SMTPResponseError</code></td>
+      <td>SMTP server returned an error</td>
+    </tr>
+    <tr>
+      <td><code>SMTP_TIMEOUT_ERROR</code></td>
+      <td><code>SMTPTimeoutError</code></td>
+      <td>SMTP connection timed out</td>
+    </tr>
+    <tr>
+      <td><code>UNKNOWN_ERROR</code></td>
+      <td><code>MailzenoError</code></td>
+      <td>Unexpected error (base class)</td>
+    </tr>
+  </tbody>
+</table>
+
+## SDK error handling
+
+The SDK throws `MailzenoError` with HTTP status, error code, and request ID:
+
+<CodeBlock language="typescript">
+{`import { MailZeno } from "@mailzeno/client"
+
+try {
+  await mz.emails.send(payload)
+} catch (err) {
+  console.error("Message:", err.message)
+  console.error("Status:", err.status)       // e.g. 401, 429, 500
+  console.error("Code:", err.code)           // e.g. "invalid_api_key"
+  console.error("Request ID:", err.requestId) // x-request-id header
+}`}
+</CodeBlock>
+
+## Error examples
+
+### Missing fields
+
+<CodeBlock language="json" title="400 Bad Request">
+{`{
+  "error": "Missing required fields: smtpId, from, to",
+  "code": "missing_required_fields"
+}`}
+</CodeBlock>
+
+### Authentication error
+
+<CodeBlock language="json" title="401 Unauthorized">
+{`{
+  "error": "Invalid or missing API key",
+  "code": "invalid_api_key"
+}`}
+</CodeBlock>
+
+### Rate limit error
+
+<CodeBlock language="json" title="429 Too Many Requests">
+{`{
+  "error": "Rate limit exceeded",
+  "code": "rate_limit_exceeded"
+}`}
+</CodeBlock>
+
+### Server error
+
+<CodeBlock language="json" title="500 Internal Server Error">
+{`{
+  "error": "Email sending failed",
+  "code": "email_send_failed"
+}`}
+</CodeBlock>

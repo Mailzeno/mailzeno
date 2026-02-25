@@ -1,0 +1,281 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- Light mode defaults ---- */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #fafafa;
+  --color-bg-tertiary: #f5f5f5;
+  --color-bg-hover: #eeeeee;
+  --color-bg-active: #e5e5e5;
+  --color-bg-code: #f4f4f4;
+  --color-bg-inline-code: #f0f0f0;
+  --color-bg-header: rgba(255, 255, 255, 0.9);
+
+  --color-border-primary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-accent: #249c74;
+
+  --color-text-primary: #111111;
+  --color-text-secondary: #555555;
+  --color-text-tertiary: #777777;
+  --color-text-heading: #0a0a0a;
+  --color-text-link: #249c74;
+
+  /* Green Primary */
+  --color-accent-primary: #64d8a3;
+  --color-accent-secondary: #249c74;
+  --color-accent-muted: rgba(100, 216, 163, 0.12);
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #249c74;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  --animate-fade-in: fadeIn 0.4s ease-out;
+  --animate-slide-in: slideIn 0.3s ease-out;
+  --animate-theme-icon: themeIconSpin 0.4s ease-out;
+}
+
+/* ==============================
+   DARK MODE OVERRIDES
+   ============================== */
+html.dark {
+  --color-bg-primary: #020202;
+  --color-bg-secondary: #0d100f;
+  --color-bg-tertiary: #1c2220;
+  --color-bg-hover: #1b2e28;
+  --color-bg-active: #2a312f;
+  --color-bg-code: #141917;
+  --color-bg-inline-code: #1a211f;
+  --color-bg-header: rgba(15, 20, 18, 0.85);
+
+  --color-border-primary: #1f2a26;
+  --color-border-secondary: #2a3a34;
+  --color-border-accent: #249c74;
+
+  --color-text-primary: #e6f4ee;
+  --color-text-secondary: #dbebe4;
+  --color-text-tertiary: #8f9e99;
+  --color-text-heading: #ffffff;
+  --color-text-link: #64d8a3;
+
+  --color-accent-primary: #64d8a3;
+  --color-accent-secondary: #22c55e;
+  --color-accent-muted: rgba(100, 216, 163, 0.15);
+
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  --color-info: #64d8a3;
+}
+/* ==============================
+   KEYFRAMES (referenced by @theme)
+   ============================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes themeIconSpin {
+  from {
+    transform: rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==============================
+   BASE LAYER
+   ============================== */
+@layer base {
+  html {
+    @apply scroll-smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-sans antialiased leading-relaxed text-[15px] transition-colors duration-300;
+  }
+
+  ::selection {
+    @apply bg-accent-muted text-accent-secondary;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border-secondary rounded-sm;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-accent;
+  }
+}
+
+/* ==============================
+   PROSE / MDX CONTENT STYLES
+   These must stay in CSS because MDX renders
+   raw HTML elements we can't add classes to.
+   ============================== */
+.prose {
+  @apply max-w-[720px] text-text-primary;
+}
+
+.prose h1 {
+  @apply text-[1.75rem] sm:text-[2rem] font-bold text-text-heading tracking-tight mb-3 leading-tight;
+}
+
+.prose h2 {
+  @apply text-xl sm:text-[1.4rem] font-semibold text-text-heading tracking-tight mt-10 mb-3 pb-2 border-b border-border-primary leading-snug;
+}
+
+.prose h3 {
+  @apply text-base sm:text-[1.15rem] font-semibold text-text-heading mt-8 mb-2 leading-snug;
+  letter-spacing: -0.015em;
+}
+
+.prose h4 {
+  @apply text-base font-semibold text-text-heading mt-6 mb-2;
+}
+
+.prose p {
+  @apply mb-5 text-text-secondary leading-relaxed;
+}
+
+.prose a {
+  @apply text-text-link no-underline font-medium transition-colors duration-150;
+}
+
+.prose a:hover {
+  @apply text-accent-secondary underline underline-offset-[3px];
+}
+
+.prose strong {
+  @apply text-text-heading font-semibold;
+}
+
+.prose ul,
+.prose ol {
+  @apply mb-5 pl-6 text-text-secondary;
+}
+
+.prose li {
+  @apply mb-1.5;
+}
+
+.prose li::marker {
+  @apply text-text-tertiary;
+}
+
+.prose hr {
+  @apply border-none border-t border-border-primary my-8;
+}
+
+.prose blockquote {
+  @apply border-l-[3px] border-accent-primary py-3 px-4 my-6 bg-accent-muted rounded-r-lg text-text-secondary;
+}
+
+.prose blockquote p {
+  @apply mb-0;
+}
+
+.prose table {
+  @apply w-full border-collapse my-6 text-sm;
+}
+
+.prose thead th {
+  @apply text-left py-3 px-3 sm:px-4 bg-bg-tertiary text-text-heading font-semibold border-b border-border-secondary whitespace-nowrap text-xs sm:text-sm;
+}
+
+.prose tbody td {
+  @apply py-3 px-3 sm:px-4 border-b border-border-primary text-text-secondary text-xs sm:text-sm;
+}
+
+.prose tbody tr:hover {
+  @apply bg-bg-hover;
+}
+
+/* Inline code */
+.prose :not(pre)>code {
+  @apply font-mono bg-bg-inline-code py-[0.15em] px-[0.4em] rounded text-[0.85em] text-accent-secondary border border-border-primary font-normal;
+}
+
+/* Code blocks (rehype-pretty-code) */
+.prose pre {
+  @apply my-6 rounded-[10px] border border-border-primary overflow-hidden;
+}
+
+.prose pre>code {
+  @apply block py-4 px-4 sm:px-5 overflow-x-auto font-mono text-[0.8125rem] leading-relaxed;
+  tab-size: 2;
+}
+
+.prose [data-rehype-pretty-code-figure] {
+  @apply my-6;
+}
+
+.prose [data-rehype-pretty-code-figure] pre {
+  @apply m-0;
+}
+
+.prose [data-rehype-pretty-code-title] {
+  @apply font-mono text-xs py-2 px-4 sm:px-5 bg-bg-tertiary text-text-tertiary border border-border-primary border-b-0 rounded-t-[10px];
+}
+
+.prose [data-rehype-pretty-code-title]+pre {
+  @apply rounded-t-none;
+}
+
+/* Line numbers */
+.prose code[data-line-numbers] {
+  counter-reset: line;
+}
+
+.prose code[data-line-numbers]>[data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  @apply inline-block w-4 mr-5 text-right text-text-tertiary text-xs;
+}
+
+/* Highlighted lines */
+.prose [data-highlighted-line] {
+  background-color: rgba(99, 102, 241, 0.08);
+  @apply border-l-2 border-accent-primary -mx-5 px-5;
+  padding-left: calc(1.25rem - 2px);
+}
+
+html {
+  scroll-behavior: smooth;
+}

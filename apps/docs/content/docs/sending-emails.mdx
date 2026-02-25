@@ -1,0 +1,140 @@
+# Sending Emails
+
+Mailzeno supports sending transactional emails via the SDK or REST API through your own SMTP server. This guide covers all the options available when composing and sending emails.
+
+## Basic email
+
+The simplest way to send an email with the SDK:
+
+<CodeBlock language="typescript" title="send.ts">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+const result = await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "recipient@example.com",
+  subject: "Order Confirmation",
+  html: "<h1>Your order has been confirmed</h1>",
+})
+
+console.log("Message ID:", result.messageId)`}
+</CodeBlock>
+
+## HTML and plain text
+
+You can send both HTML and plain text versions. The plain text version is used as a fallback for email clients that don't support HTML.
+
+<CodeBlock language="typescript">
+{`await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "recipient@example.com",
+  subject: "Order Confirmation",
+  html: "<h1>Your order has been confirmed</h1><p>Order #12345</p>",
+  text: "Your order has been confirmed. Order #12345",
+})`}
+</CodeBlock>
+
+## Multiple recipients
+
+Send to multiple recipients by passing an array of email addresses:
+
+<CodeBlock language="typescript">
+{`await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: ["user1@example.com", "user2@example.com"],
+  subject: "Team Update",
+  html: "<p>Here's the latest update...</p>",
+})`}
+</CodeBlock>
+
+## Using templates
+
+Instead of passing `subject` and `html`, you can reference a stored template by key or ID:
+
+<CodeBlock language="typescript">
+{`// By template key
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateKey: "welcome_email",
+  variables: {
+    name: "Harsh",
+    company: "Mailzeno",
+  },
+})
+
+// By template ID (UUID)
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateId: "550e8400-e29b-41d4-a716-446655440000",
+  variables: {
+    name: "Harsh",
+  },
+})`}
+</CodeBlock>
+
+<Callout type="info" title="Content rule">
+You must provide either `html` + `subject` OR a `templateKey`/`templateId`. Not both. The SDK enforces this at the type level.
+</Callout>
+
+## Idempotency
+
+Prevent duplicate emails by including an idempotency key. If Mailzeno receives a request with the same key, it recognizes it as a duplicate and prevents re-sending.
+
+<CodeBlock language="typescript">
+{`await mz.emails.send(
+  {
+    smtpId: "your_smtp_id",
+    from: "you@example.com",
+    to: "user@example.com",
+    subject: "Payment Receipt",
+    html: "<h1>Thank you for your payment</h1>",
+  },
+  {
+    idempotencyKey: "payment-receipt-order-12345",
+  }
+)`}
+</CodeBlock>
+
+<Callout type="info" title="Idempotency keys">
+The SDK sends the idempotency key as an `Idempotency-Key` HTTP header automatically. Use business-meaningful keys tied to your domain objects (order IDs, user IDs).
+</Callout>
+
+## Error handling
+
+The SDK throws `MailzenoError` on failure. Always wrap sends in try/catch:
+
+<CodeBlock language="typescript">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+try {
+  const result = await mz.emails.send({
+    smtpId: "your_smtp_id",
+    from: "you@example.com",
+    to: "user@example.com",
+    subject: "Hello",
+    html: "<h1>Hello</h1>",
+  })
+  console.log("Email sent:", result.messageId)
+} catch (err) {
+  console.error("Message:", err.message)
+  console.error("Status:", err.status)       // HTTP status code
+  console.error("Code:", err.code)           // e.g. "rate_limit_exceeded"
+  console.error("Request ID:", err.requestId) // for debugging
+}`}
+</CodeBlock>
+
+## Next steps
+
+- [Templates](/templates) — Use reusable email templates
+- [API Reference](/api-reference) — Full endpoint documentation
+- [Error Codes](/error-codes) — All possible error responses

@@ -1,0 +1,248 @@
+# Quickstart
+
+This guide shows how to send your first email using the official
+`@mailzeno/client` SDK.
+
+Mailzeno is SMTP-first. Before sending emails, you must:
+
+1. Create an SMTP account in the dashboard  
+2. Use the exact SMTP username as the `from` address  
+3. Generate an API key (`mz_api_xxxxxx`)
+
+---
+
+## Prerequisites
+
+- Node.js 18 or later
+- A Mailzeno API key (`mz_api_xxxxxx`)
+- At least one configured SMTP account
+- A sender email that matches your SMTP username
+
+---
+
+## Install the SDK
+
+Install the Mailzeno SDK:
+
+<CodeBlock language="bash" title="npm">
+{`npm install @mailzeno/client`}
+</CodeBlock>
+
+Or:
+
+<CodeBlock language="bash">
+{`# yarn
+yarn add @mailzeno/client
+
+# pnpm
+pnpm add @mailzeno/client`}
+</CodeBlock>
+
+---
+
+## Initialize the client
+
+The constructor requires your API key as a string.
+
+<CodeBlock language="typescript" title="mailzeno.ts">
+{`import { MailZeno } from "@mailzeno/client"
+
+export const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)`}
+</CodeBlock>
+
+<Callout type="warning" title="API Key Security">
+Never commit your API key to source control. Store it in environment variables.
+</Callout>
+
+Example `.env` file:
+
+<CodeBlock language="bash" title=".env">
+{`MAILZENO_API_KEY=mz_api_your_key_here`}
+</CodeBlock>
+
+---
+
+## Send your first email
+
+You must provide:
+
+- `smtpId`
+- `from` (must match SMTP username)
+- `to`
+- Either:
+  - `subject` + `html`
+  - OR a template (`templateId` or `templateKey`)
+
+Example using raw HTML:
+
+<CodeBlock language="typescript" title="send.ts">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+async function main() {
+  const result = await mz.emails.send({
+    smtpId: "your-smtp-id",
+    from: "hello@yourdomain.com",
+    to: "user@example.com",
+    subject: "Hello from Mailzeno",
+    html: "<h1>Hello World</h1>"
+  })
+
+  console.log("Message ID:", result.messageId)
+  console.log("Accepted:", result.accepted)
+  console.log("Rejected:", result.rejected)
+}
+
+main().catch(console.error)`}
+</CodeBlock>
+
+## Passing dynamic variables in raw HTML
+
+<CodeBlock language="typescript">
+{`await mz.emails.send({
+  smtpId: "your-smtp-id",
+  from: "hello@yourdomain.com",
+  to: "user@example.com",
+  subject: "Hello {{name}}",
+  html: "<h1>Hello {{name}}</h1>",
+  variables: {
+    name: "Harsh"
+  }
+})`}
+</CodeBlock>
+
+`{{variable}}` placeholders are interpolated at send time.
+
+#### Important
+
+- The `from` address must match the SMTP account username.
+- The `messageId` is returned from your SMTP provider.
+- Detailed SMTP errors are not exposed via the public API.
+
+---
+
+## Using templates
+
+Instead of passing `subject` and `html`, you can use a saved template:
+
+<CodeBlock language="typescript">
+{`await mz.emails.send({
+  smtpId: "your-smtp-id",
+  from: "hello@yourdomain.com",
+  to: "user@example.com",
+  templateKey: "welcome_email",
+  variables: {
+    name: "Harsh"
+  }
+})`}
+</CodeBlock>
+
+Templates support simple variable interpolation:
+
+```html
+{{name}} {{email}} {{age}} {{custom}}
+```
+
+No conditionals or logic are supported.
+
+---
+
+## Idempotency
+
+To prevent duplicate sends, provide an idempotency key:
+
+<CodeBlock language="typescript">
+{`await mz.emails.send(
+  {
+    smtpId: "your-smtp-id",
+    from: "hello@yourdomain.com",
+    to: "user@example.com",
+    subject: "Order Confirmation",
+    html: "<p>Thank you</p>"
+  },
+  {
+    idempotencyKey: "order-123"
+  }
+)`}
+</CodeBlock>
+
+---
+
+## Handling errors
+
+The SDK throws `MailzenoError` on failure.
+
+<CodeBlock language="typescript">
+{`import { MailZeno, MailZenoError } from "@mailzeno/client"
+
+try {
+  await mz.emails.send({
+    smtpId: "your-smtp-id",
+    from: "hello@yourdomain.com",
+    to: "invalid-email",
+    subject: "Test",
+    html: "<p>Test</p>"
+  })
+} catch (err) {
+  if (err instanceof MailZenoError) {
+    console.error("Message:", err.message)
+    console.error("Status:", err.status)
+    console.error("Code:", err.code)
+    console.error("Request ID:", err.requestId)
+  }
+}`}
+</CodeBlock>
+
+---
+
+## REST API (without SDK)
+
+You can call the API directly:
+
+<CodeBlock language="bash" title="cURL">
+{`curl -X POST https://api.mailzeno.dev/v1/emails \\
+  -H "Authorization: Bearer mz_api_your_key_here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "smtpId": "your-smtp-id",
+    "from": "hello@yourdomain.com",
+    "to": "user@example.com",
+    "subject": "Hello",
+    "html": "<h1>Hello World</h1>"
+  }'`}
+</CodeBlock>
+
+---
+
+## Successful response
+
+<CodeBlock language="json" title="200 OK">
+{`{
+  "messageId": "<smtp-provider-message-id>",
+  "accepted": ["user@example.com"],
+  "rejected": [],
+  "response": "250 OK"
+}`}
+</CodeBlock>
+
+---
+
+## Rate limits
+
+Requests are limited per minute and per day based on your plan.
+
+When rate limits are exceeded, the API returns:
+
+- HTTP 429
+- `retry-after` header
+- `x-ratelimit-*` headers
+
+---
+
+## Next steps
+
+- [Authentication](/authentication)
+- [API Reference](/api-reference)
+- [Rate Limits](/rate-limits)
+- [Templates](/templates)

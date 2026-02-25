@@ -1,0 +1,142 @@
+# Templates
+
+Mailzeno supports stored email templates with dynamic `{{variable}}` placeholders. Templates let you separate your email content from your application code and manage it through the dashboard.
+
+## Creating templates
+
+Templates are created and managed through the [Mailzeno Dashboard](https://mailzeno.dev/dashboard/templates). Each template has a name, key, subject, and HTML body. Use `{{variable}}` placeholders for dynamic content.
+
+<CodeBlock language="html" title="Template HTML">
+{`<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+  <h1>Welcome, {{name}}!</h1>
+  <p>Thanks for joining {{company}}.</p>
+  <p>Your account is ready at {{dashboard_url}}</p>
+</div>`}
+</CodeBlock>
+
+## Sending with templates
+
+### Via template key
+
+<CodeBlock language="typescript">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateKey: "welcome_email",
+  variables: {
+    name: "Harsh",
+    company: "Mailzeno",
+    dashboard_url: "https://mailzeno.dev/dashboard",
+  },
+})`}
+</CodeBlock>
+
+### Via template ID
+
+<CodeBlock language="typescript">
+{`await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateId: "550e8400-e29b-41d4-a716-446655440000",
+  variables: {
+    name: "Harsh",
+  },
+})`}
+</CodeBlock>
+
+### Via REST API
+
+<CodeBlock language="bash" title="cURL">
+{`curl -X POST https://api.mailzeno.dev/v1/emails \\
+  -H "Authorization: Bearer mz_api_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "smtpId": "your_smtp_id",
+    "from": "you@example.com",
+    "to": "user@example.com",
+    "templateKey": "welcome_email",
+    "variables": {
+      "name": "Harsh",
+      "company": "Mailzeno",
+      "dashboard_url": "https://mailzeno.dev/dashboard"
+    }
+  }'`}
+</CodeBlock>
+
+## Template resolution
+
+When you send an email with a template:
+
+1. The API looks up the template by `templateKey` or `templateId`
+2. It verifies the template belongs to the authenticated user
+3. The template's `subject` and `body` are rendered with the provided `variables`
+4. The rendered content is sent through the SMTP engine
+
+Variables are replaced at send time. If a variable is not provided, it renders as an empty string.
+
+## Template vs raw HTML
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Raw HTML</th>
+      <th>Template</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Content provided in request</td>
+      <td>Yes</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>Stored on server</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Dynamic variables</td>
+      <td>Yes</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Reusable across sends</td>
+      <td>Manual</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Editable without code changes</td>
+      <td>No</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+<Callout type="info" title="Variable support">
+Both raw HTML and templates support `{{variable}}` interpolation.
+Interpolation is handled by the core engine at send time.
+</Callout>
+
+<Callout type="info" title="Content rule">
+You must provide either `html` content OR a `templateKey`/`templateId` — not both. The SDK enforces this at the type level using discriminated unions.
+</Callout>
+
+## Managing templates
+
+Templates can be managed through the [Mailzeno Dashboard](https://mailzeno.dev/dashboard/templates):
+
+- **Template Key** — A human-readable identifier (e.g., `welcome_email`, `password_reset`)
+- **Template ID** — A UUID auto-generated on creation
+- **Create, edit, delete** — Full CRUD through the dashboard UI
+
+## Next steps
+
+- [Sending Emails](/sending-emails) — More sending options
+- [API Reference](/api-reference) — Full endpoint docs

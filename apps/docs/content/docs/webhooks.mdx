@@ -1,0 +1,60 @@
+# Webhooks
+
+<span className="inline-flex items-center gap-1.5 py-0.5 px-2 text-xs font-semibold rounded-full font-mono tracking-wide bg-accent-muted text-warning border border-border-accent mb-6">Coming Soon</span>
+
+Webhooks will allow you to receive real-time notifications when email events occur — such as delivery, opens, clicks, bounces, and complaints.
+
+<Callout type="info" title="Under development">
+Webhooks are currently under active development and will be available in a future release. This page will be updated with full documentation when the feature launches.
+</Callout>
+
+## Planned events
+
+The following webhook events are planned for the initial release:
+
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>email.sent</code></td>
+      <td>Email was accepted and queued for delivery</td>
+    </tr>
+    <tr>
+      <td><code>email.delivered</code></td>
+      <td>Email was successfully delivered to the recipient</td>
+    </tr>
+    <tr>
+      <td><code>email.opened</code></td>
+      <td>Recipient opened the email</td>
+    </tr>
+    <tr>
+      <td><code>email.clicked</code></td>
+      <td>Recipient clicked a link in the email</td>
+    </tr>
+    <tr>
+      <td><code>email.bounced</code></td>
+      <td>Email bounced (hard or soft)</td>
+    </tr>
+    <tr>
+      <td><code>email.complained</code></td>
+      <td>Recipient marked the email as spam</td>
+    </tr>
+  </tbody>
+</table>
+
+## Planned features
+
+- HMAC signature verification for security
+- Configurable retry policy for failed webhook deliveries
+- Event filtering — subscribe only to events you care about
+- Webhook logs in the dashboard
+- Test mode for development
+
+## Stay updated
+
+Check the [Changelog](/changelog) for announcements when webhooks become available.

@@ -1,0 +1,119 @@
+# Installation
+
+The `@mailzeno/client` SDK is the official way to interact with the Mailzeno API. It provides full TypeScript support, automatic retries with backoff, and structured error handling.
+
+## System requirements
+
+- **Node.js** 18.0 or later
+- **TypeScript** 5.0+ (optional but recommended)
+- macOS, Windows, or Linux
+
+## Install the package
+
+<CodeBlock language="bash" title="npm">
+{`npm install @mailzeno/client`}
+</CodeBlock>
+
+<CodeBlock language="bash" title="yarn">
+{`yarn add @mailzeno/client`}
+</CodeBlock>
+
+<CodeBlock language="bash" title="pnpm">
+{`pnpm add @mailzeno/client`}
+</CodeBlock>
+
+## Configuration
+
+Initialize the client with your API key. The constructor accepts the API key as the first argument and an optional configuration object:
+
+<CodeBlock language="bash" title=".env">
+{`MAILZENO_API_KEY=mz_api_your_api_key_here`}
+</CodeBlock>
+
+<CodeBlock language="typescript" title="mailzeno.ts">
+{`import { MailZeno } from "@mailzeno/client"
+
+export const mailzeno = new Mailzeno(process.env.MAILZENO_API_KEY!, {
+  // All options below are optional
+  baseUrl: "https://mailzeno.dev",  // default
+  timeout: 10000,                    // 10 seconds (default)
+  retries: 2,                        // auto-retry on failure (default)
+  retryDelay: 500,                   // base delay between retries in ms (default)
+})`}
+</CodeBlock>
+
+## TypeScript support
+
+The SDK ships with full TypeScript definitions. All request and response types are exported:
+
+<CodeBlock language="typescript" title="types.ts">
+{`import type {
+  SendEmailOptions,
+  SendEmailResponse,
+} from "@mailzeno/client"
+
+// Raw HTML mode
+const payload: SendEmailOptions = {
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<h1>Hello World</h1>",
+}`}
+</CodeBlock>
+
+## Framework integration
+
+### Next.js (App Router)
+
+<CodeBlock language="typescript" title="app/api/send/route.ts">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+export async function POST(request: Request) {
+  const body = await request.json()
+
+  try {
+    const result = await mz.emails.send({
+      smtpId: body.smtpId,
+      from: "hello@yourdomain.com",
+      to: body.email,
+      subject: "Welcome!",
+      html: "<h1>Welcome to our platform</h1>",
+    })
+
+    return Response.json({ messageId: result.messageId })
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 400 })
+  }
+}`}
+</CodeBlock>
+
+### Express
+
+<CodeBlock language="typescript" title="server.ts">
+{`import express from "express"
+import { MailZeno } from "@mailzeno/client"
+
+const app = express()
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+app.post("/send", async (req, res) => {
+  try {
+    const result = await mz.emails.send(req.body)
+    res.json({ messageId: result.messageId })
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})`}
+</CodeBlock>
+
+<Callout type="info" title="REST API">
+Don't want to use the SDK? You can call the [REST API](/api-reference) directly from any language or platform.
+</Callout>
+
+## Next steps
+
+- [Quickstart](/quickstart) — Send your first email
+- [SDK Usage](/sdk) — Advanced SDK features

@@ -1,0 +1,132 @@
+# Rate Limits
+
+Mailzeno enforces rate limits to protect infrastructure and ensure fair usage. Limits are applied per API key and vary by plan.
+
+## Default limits
+
+<table>
+  <thead>
+    <tr>
+      <th>Plan</th>
+      <th>Per Minute</th>
+      <th>Per Day</th>
+      <th>Retention</th>
+      <th>Bulk Sending</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Free</strong></td>
+      <td>5 requests</td>
+      <td>100 emails</td>
+      <td>7 days</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Pro</strong></td>
+      <td>30 requests</td>
+      <td>2,000 emails</td>
+      <td>30 days</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+## How rate limiting works
+
+Mailzeno uses a **dual-window** rate limiting strategy powered by Redis:
+
+1. **Per-minute window** — Sliding window based on the current minute bucket
+2. **Daily window** — Based on the current UTC date
+
+Both windows are checked on every request. If either limit is exceeded, the request is rejected with a `429` status.
+
+## Rate limit headers
+
+Every API response includes rate limit information in the response headers:
+
+<table>
+  <thead>
+    <tr>
+      <th>Header</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>x-ratelimit-limit</code></td>
+      <td>Maximum requests allowed per window</td>
+    </tr>
+    <tr>
+      <td><code>x-ratelimit-remaining</code></td>
+      <td>Remaining requests in the current window</td>
+    </tr>
+    <tr>
+      <td><code>x-ratelimit-reset</code></td>
+      <td>Unix timestamp when the rate limit resets</td>
+    </tr>
+    <tr>
+      <td><code>retry-after</code></td>
+      <td>Seconds to wait before retrying (only on 429)</td>
+    </tr>
+  </tbody>
+</table>
+
+### Example response headers
+
+<CodeBlock language="http">
+{`HTTP/1.1 200 OK
+x-ratelimit-limit: 5
+x-ratelimit-remaining: 3
+x-ratelimit-reset: 1708000060`}
+</CodeBlock>
+
+## When limits are exceeded
+
+When you exceed a rate limit, the API returns a `429` status code with a `retry-after` header indicating how long to wait (in seconds):
+
+<CodeBlock language="json" title="429 Too Many Requests">
+{`{
+  "error": "Rate limit exceeded",
+  "code": "rate_limit_exceeded"
+}`}
+</CodeBlock>
+
+<CodeBlock language="http">
+{`HTTP/1.1 429 Too Many Requests
+retry-after: 30
+x-ratelimit-limit: 5
+x-ratelimit-remaining: 0
+x-ratelimit-reset: 1708000060`}
+</CodeBlock>
+
+## Daily usage check
+
+In addition to per-request rate limits, the email service layer performs a **daily usage check** before sending. Even if rate limit headers show remaining capacity, exceeding the daily send limit will block sends.
+
+<Callout type="info" title="Automatic retries">
+The `@mailzeno/client` SDK automatically handles rate limiting. It detects `429` responses, reads the `Retry-After` header, waits the specified duration, and retries up to the configured retry count.
+</Callout>
+
+## Fail-open policy
+
+If the Redis rate limiting service is unavailable, Mailzeno **fails open** — requests are allowed through rather than blocked. This ensures legitimate traffic isn't disrupted during infrastructure issues.
+
+## Handling rate limits
+
+Best practices for handling rate limits:
+
+- **Use the SDK** — It handles `429` responses and `Retry-After` automatically
+- **Monitor headers** — Check `x-ratelimit-remaining` to preemptively slow down
+- **Implement queuing** — For bulk sends, queue emails and send at a controlled rate
+- **Upgrade your plan** — If you consistently hit limits, consider upgrading to Pro
+- **Use idempotency keys** — Prevent duplicates when retrying after rate limits
+
+<CodeBlock language="typescript" title="SDK configuration for retries">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!, {
+  retries: 2,        // Retry up to 2 times (default)
+  retryDelay: 500,   // Base delay between retries (default)
+})`}
+</CodeBlock>

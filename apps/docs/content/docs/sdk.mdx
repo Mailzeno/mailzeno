@@ -1,0 +1,227 @@
+# SDK Usage
+
+The `@mailzeno/client` SDK provides a type-safe, developer-friendly interface to the Mailzeno API. This guide covers advanced configuration and usage patterns.
+
+## Initialization
+
+<CodeBlock language="typescript" title="mailzeno.ts">
+{`import { MailZeno, MailZenoError } from "@mailzeno/client"
+
+const mz = new MailZeno(process.env.MAILZENO_API_KEY!, {
+  // All options below are optional
+  baseUrl: "https://api.mailzeno.dev",   
+  timeout: 10000,                     // Request timeout in ms
+  retries: 2,                         // Max retry attempts
+  retryDelay: 500,                    // Base delay between retries (ms)
+  fetch: customFetch,                 // Custom fetch implementation
+})`}
+</CodeBlock>
+
+## Configuration options
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>baseUrl</code></td>
+      <td>string</td>
+      <td><code>https://mailzeno.dev</code></td>
+      <td>API base URL. Trailing slashes are stripped.</td>
+    </tr>
+    <tr>
+      <td><code>retries</code></td>
+      <td>number</td>
+      <td><code>2</code></td>
+      <td>Number of retry attempts. Set to 0 to disable.</td>
+    </tr>
+    <tr>
+      <td><code>retryDelay</code></td>
+      <td>number</td>
+      <td><code>500</code></td>
+      <td>Base delay between retries (linear backoff with jitter)</td>
+    </tr>
+    <tr>
+      <td><code>timeout</code></td>
+      <td>number</td>
+      <td><code>10000</code></td>
+      <td>Request timeout in milliseconds</td>
+    </tr>
+    <tr>
+      <td><code>fetch</code></td>
+      <td>typeof fetch</td>
+      <td>Global fetch</td>
+      <td>Custom fetch implementation for testing or non-native environments</td>
+    </tr>
+  </tbody>
+</table>
+
+## Sending emails
+
+The `mz.emails.send()` method sends an email through your configured SMTP server:
+
+<CodeBlock language="typescript">
+{`const result = await mz.emails.send({
+  smtpId: "your_smtp_id",  // You must provide the ID of a previously configured SMTP account.
+  from: "you@example.com",
+  to: "recipient@example.com",
+  subject: "Welcome!",
+  html: "<h1>Welcome to our platform</h1>",
+})
+
+console.log(result.messageId)   // SMTP message ID
+console.log(result.accepted)    // Recipients that accepted
+console.log(result.rejected)    // Recipients that rejected`}
+</CodeBlock>
+
+## Content modes
+
+The SDK uses discriminated unions to enforce that you provide either raw content or template content — never both:
+
+<CodeBlock language="typescript">
+{`// Raw HTML mode
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<h1>Hello</h1>",
+  text: "Hello",  // optional plain text fallback
+})
+
+// Template mode (by key)
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateKey: "welcome_email",
+  variables: { name: "Harsh" },
+})
+
+// Template mode (by ID)
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  templateId: "550e8400-e29b-41d4-a716-446655440000",
+  variables: { name: "Harsh" },
+})
+
+// Dianamic Variables
+await mz.emails.send({
+  smtpId: "your_smtp_id",
+  from: "you@example.com",
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<h1>Hello</h1>",
+  variables: { name: "Harsh" },
+})`}
+
+</CodeBlock>
+
+## Retry logic
+
+The SDK automatically retries failed requests:
+
+<table>
+  <thead>
+    <tr>
+      <th>Condition</th>
+      <th>Retried?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HTTP 5xx (server errors)</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>HTTP 429 (rate limited)</td>
+      <td>Yes (respects <code>Retry-After</code>)</td>
+    </tr>
+    <tr>
+      <td>Network errors</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>Timeouts (<code>AbortError</code>)</td>
+      <td>No (throws immediately)</td>
+    </tr>
+    <tr>
+      <td>HTTP 4xx (except 429)</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+Retry delay uses linear backoff with jitter: `retryDelay × (attempt + 1) + random(0–200ms)`.
+
+## Error handling
+
+The SDK throws `MailzenoError` for all failures — it does not use a result pattern:
+
+<CodeBlock language="typescript">
+{`import { MailZeno } from "@mailzeno/client"
+
+try {
+  await mz.emails.send({
+    smtpId: "your_smtp_id",
+    from: "you@example.com",
+    to: "invalid-email",
+    subject: "Test",
+    html: "<p>Test</p>",
+  })
+} catch (err) {
+  console.error(err.message)     // Human-readable message
+  console.error(err.status)      // HTTP status code (e.g., 401, 429)
+  console.error(err.code)        // API error code (e.g., "rate_limit_exceeded")
+  console.error(err.requestId)   // x-request-id for debugging
+}`}
+</CodeBlock>
+
+<Callout type="info" title="Error behavior">
+The SDK throws on all API errors. Network errors and timeouts also throw after all retries are exhausted. Always wrap sends in try/catch.
+</Callout>
+
+## Idempotency
+
+<CodeBlock language="typescript">
+{`await mz.emails.send(
+  {
+    smtpId: "your_smtp_id",
+    from: "you@example.com",
+    to: "user@example.com",
+    subject: "Order Confirmation",
+    html: "<h1>Order #12345 confirmed</h1>",
+  },
+  {
+    idempotencyKey: "order-confirmation-12345",
+  }
+)
+
+// Sending the same request again with the same key
+// is recognized as a duplicate and prevented`}
+</CodeBlock>
+
+## TypeScript types
+
+<CodeBlock language="typescript">
+{`import type {
+  SendEmailOptions,
+  SendEmailResponse,
+} from "@mailzeno/client"
+
+// Mailzeno class and MailzenoError are also exported`}
+</CodeBlock>
+
+## Next steps
+
+- [Sending Emails](/sending-emails) — Detailed email composition guide
+- [Templates](/templates) — Reusable email templates
+- [Error Codes](/error-codes) — Complete error reference

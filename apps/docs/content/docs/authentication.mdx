@@ -1,0 +1,100 @@
+# Authentication
+
+Mailzeno uses **API key authentication** for all API requests. Each API key is scoped to a single user account and can be deactivated or deleted at any time from the dashboard.
+
+## API key format
+
+Mailzeno API keys use a consistent prefix for easy identification:
+
+<table>
+  <thead>
+    <tr>
+      <th>Prefix</th>
+      <th>Description</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>mz_api_</code></td>
+      <td>All API keys</td>
+      <td><code>mz_api_a1b2c3d4e5f6...</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<Callout type="warning" title="Key visibility">
+API keys are shown **once** at creation time. After that, only the hashed version is stored. If you lose your key, generate a new one from the dashboard.
+</Callout>
+
+## Using your API key
+
+Pass your API key in the `Authorization` header with the `Bearer` scheme:
+
+<CodeBlock language="http">
+{`Authorization: Bearer mz_api_your_api_key`}
+</CodeBlock>
+
+### With the SDK
+
+<CodeBlock language="typescript">
+{`import { MailZeno } from "@mailzeno/client"
+
+const mz = new Mailzeno(process.env.MAILZENO_API_KEY!)
+
+await mz.emails.send({
+  from: "hello@yourdomain.com",
+  to: "user@example.com",
+  subject: "Welcome to Mailzeno",
+  html: "<p>Hello world</p>"
+})`}
+</CodeBlock>
+
+### With cURL
+
+<CodeBlock language="bash">
+{`curl -X POST https://api.mailzeno.dev/v1/emails \\
+  -H "Authorization: Bearer mz_api_your_api_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{ ... }'`}
+</CodeBlock>
+
+## How authentication works
+
+API keys follow a **hash-only** storage model:
+
+1. The raw key is generated and shown to the user **once** at creation
+2. The key is hashed (SHA-256) before storage in the database
+3. On each request, the provided key is hashed and compared against stored hashes
+4. Raw keys are **never stored** — only their hashes exist in the database
+
+## Key management
+
+You can manage your API keys from the [Mailzeno Dashboard](https://mailzeno.dev/dashboard/api):
+
+- **Generate** — Create a new `mz_api_` prefixed key
+- **Deactivate** — Disable a key without deleting it
+- **Delete** — Permanently remove a key
+- **Last used** — Track when each key was last used
+
+<Callout type="error" title="Security">
+Never expose your API key in client-side code, public repositories, or browser-accessible files. Always use server-side calls or environment variables.
+</Callout>
+
+## Authentication errors
+
+If authentication fails, you'll receive a `401` response:
+
+<CodeBlock language="json" title="401 Unauthorized">
+{`{
+  "error": "Invalid or missing API key",
+  "code": "invalid_api_key"
+}`}
+</CodeBlock>
+
+<CodeBlock language="json" title="401 Unauthorized">
+{`{
+  "error": "Missing or malformed Authorization header",
+  "code": "invalid_auth_header"
+}`}
+</CodeBlock> 

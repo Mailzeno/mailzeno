@@ -1,0 +1,87 @@
+# Getting Started
+
+Mailzeno is an **API-first transactional email platform** built for developers who want reliable email delivery without managing their own SMTP infrastructure.
+
+It provides a clean REST API and a fully typed SDK to send transactional emails using your existing SMTP provider — securely and predictably.
+
+## Why Mailzeno?
+
+Most email platforms are designed for marketing teams.
+
+Mailzeno is built for **backend systems and engineers**.
+
+No campaign builders.  
+No complex dashboards.  
+Just infrastructure that works.
+
+- Single `POST /api/v1/emails` endpoint
+- Fully typed TypeScript SDK
+- Simple API key authentication (no OAuth flows)
+- Built-in rate limiting (minute + daily limits)
+- Idempotency support to prevent duplicate sends
+- Structured JSON error responses
+- Retry handling for transient SMTP failures
+- Open-core architecture
+
+## How it works
+
+Mailzeno accepts email payloads via REST API or SDK, validates them, applies rate limits and idempotency checks, and delivers them securely through the `@mailzeno/core` engine over SMTP.
+
+Each request is:
+
+- Authenticated via API key
+- Rate limited per key
+- Processed through a retry-safe SMTP layer
+- Logged for delivery tracking and usage analytics
+
+<Steps>
+  <Step number="1" title="Create an Account">
+    Sign up and access your Mailzeno dashboard.
+  </Step>
+  <Step number="2" title="Configure SMTP">
+    Add your SMTP provider credentials securely. Credentials are encrypted at rest.
+  </Step>
+  <Step number="3" title="Generate an API Key">
+    Create an API key for your backend service.
+  </Step>
+  <Step number="4" title="Send Your First Email">
+    Install the SDK or call the REST API to send transactional emails.
+  </Step>
+</Steps>
+
+## Architecture
+
+Mailzeno follows an open-core architecture with two primary packages:
+
+<table>
+  <thead>
+    <tr>
+      <th>Package</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>@mailzeno/client</code></td>
+      <td>Official TypeScript SDK for interacting with the Mailzeno API</td>
+    </tr>
+    <tr>
+      <td><code>@mailzeno/core</code></td>
+      <td>Core SMTP engine (validation, retry logic, connection pooling, delivery)</td>
+    </tr>
+  </tbody>
+</table>
+
+<Callout type="info" title="Open Core">
+Mailzeno follows an open-core model.  
+The client SDK and core engine are open source.  
+The managed SaaS layer includes authentication, rate limiting, abuse protection, and policy enforcement.
+
+Self-hosting documentation is coming soon.
+</Callout>
+
+## Next steps
+
+Ready to send your first email?
+
+Head to the [Quickstart guide](/quickstart) to get up and running in under 5 minutes.
