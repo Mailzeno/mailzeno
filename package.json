@@ -9,9 +9,5 @@
     "dev": "npm run dev --workspace=web",
     "build": "npm run build --workspace=web",
     "lint": "npm run lint --workspace=web"
-  },
-  "dependencies": {
-    "lenis": "^1.3.17",
-    "react-icons": "^5.5.0"
   }
 }
