@@ -5,9 +5,9 @@ import { LogoPatternDivider } from "@/components/landing/logo-divider";
 
 export function UpcomingFeature() {
   return (
-    <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 bg-background py-16 sm:py-2">
+    <section className="relative overflow-hidden  sm:px-6 lg:px-8 bg-background py-16 sm:py-2">
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 px-16 md:grid-cols-2 items-center gap-12 lg:gap-16 mt-8">
+        <div className="grid grid-cols-1 px-6 md:px-16 md:grid-cols-2 items-center gap-12 lg:gap-16 mt-8">
           {/* LEFT */}
           <div className="text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 text-xs rounded-full border bg-muted mb-6">
@@ -45,7 +45,7 @@ export function UpcomingFeature() {
           </div>
 
           {/* RIGHT */}
-          <div className="flex justify-center md:justify-end">
+          <div className="flex hidden md:block md:justify-end">
             <LogoPatternDivider />
           </div>
         </div>

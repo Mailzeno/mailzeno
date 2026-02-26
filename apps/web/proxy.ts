@@ -9,6 +9,27 @@ const authRoutes = ["/login", "/signup", "/reset-password"]
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+  const host = request.headers.get("host") || ""
+
+  // Restrict api.mailzeno.dev
+  if (host.startsWith("api.mailzeno.dev")) {
+    // Allow only /v1 routes
+    if (pathname.startsWith("/v1")) {
+      return NextResponse.next()
+    }
+
+    // Block everything else on API subdomain
+    return NextResponse.json(
+      {
+        name: "MailZeno API",
+        version: "v1",
+        status: "ok",
+        message: "Use /v1/* endpoints",
+        docs: "https://mailzeno.dev/docs",
+      },
+      { status: 404 }
+    )
+  }
 
   const response = NextResponse.next()
 
@@ -36,7 +57,7 @@ export async function proxy(request: NextRequest) {
 
   const isAuthenticated = !!user
 
-  // 🔒 Protect dashboard routes
+  // Protect dashboard routes
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!isAuthenticated) {
       const loginUrl = new URL("/login", request.url)
@@ -45,7 +66,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 🚫 Auth pages → redirect if already logged in
+  // Auth pages → redirect if already logged in
   if (authRoutes.some((route) => pathname.startsWith(route))) {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL("/dashboard", request.url))

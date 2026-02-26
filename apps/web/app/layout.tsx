@@ -16,6 +16,10 @@ export const metadata = {
   },
   description:
     "Send transactional emails using your own SMTP. Open-core, developer-first email API with built-in dashboard and SDK.",
+
+  icons: {
+    icon: "/icon.svg",
+  },
   keywords: [
     "SMTP API",
     "transactional email",
