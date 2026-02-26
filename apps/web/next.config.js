@@ -12,6 +12,9 @@ const nextConfig = {
     unoptimized: true,
   },
 
+  // 👇 YE ADD KARO
+  transpilePackages: ['@mailzeno/core', '@mailzeno/client'],
+
   async redirects() {
     return [
       {
