@@ -106,7 +106,7 @@ export async function sendEmailService(input: SendEmailInput) {
       const { data } = await supabase
         .from("templates")
         .select("subject, body")
-        .eq("template_key", input.templateKey)
+        .eq("slug", input.templateKey)
         .eq("user_id", input.userId)
         .single();
 

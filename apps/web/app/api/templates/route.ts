@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const slug = generateSlug(name);
+  const templateKey = generateSlug(name);
   const variables = extractVariables(subject + " " + body);
 
   const { data, error } = await supabase
@@ -75,7 +75,8 @@ export async function POST(req: Request) {
       {
         user_id: user.id,
         name,
-        slug,
+        slug: templateKey,
+        template_key: templateKey,
         subject,
         body,
         variables,
