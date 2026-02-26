@@ -1,6 +1,6 @@
 {
   "name": "@mailzeno/core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "SMTP engine for MailZeno",
   "license": "MIT",
   "type": "module",
@@ -9,8 +9,10 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     }
   },
   "files": [
