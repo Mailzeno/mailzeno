@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 export function OpenSourceSection() {
   return (
-    <section className="relative bg-background py-28">
+    <section className="relative bg-background py-12">
       <div className="mx-auto max-w-4xl px-6 text-center">
 
         {/* Heading */}
@@ -58,7 +58,7 @@ export function OpenSourceSection() {
           </a>
 
           <p className="mt-4 text-sm text-muted-foreground">
-            {" "} Built in Public •{" "} MIT License • Devloper Friendly.
+            {" "} Built in Public •{" "} Devloper Friendly.
           </p>
         </motion.div>
 

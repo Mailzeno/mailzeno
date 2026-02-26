@@ -56,7 +56,7 @@ export function DocsMegaMenu() {
             <p className="text-xs text-muted-foreground mb-3">DEVELOPERS</p>
 
             <Link
-              href="/docs/api"
+              href="/docs/api-reference"
               className="block rounded-lg p-2 hover:bg-muted"
             >
               <p className="font-medium">API Reference</p>
