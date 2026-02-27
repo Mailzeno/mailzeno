@@ -14,50 +14,67 @@ interface Props {
   onPreview: (template: Template) => void;
 }
 
+function useItemsPerSlide() {
+  if (typeof window === "undefined") return 3;
+  if (window.innerWidth < 640) return 1;
+  if (window.innerWidth < 1024) return 2;
+  return 3;
+}
+
 export function StarterSection({ search, onDuplicate, onPreview }: Props) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const startX = useRef<number | null>(null);
+
+  // Re-calculate on resize
+  const [itemsPerSlide, setItemsPerSlide] = useState(useItemsPerSlide);
+
+  // Listen to resize
+  useMemo(() => {
+    if (typeof window === "undefined") return;
+    function onResize() {
+      const next =
+        window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+      setItemsPerSlide(next);
+      setCurrentIndex(0);
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const filteredStarter = useMemo(() => {
     return starterTemplates.filter((t: Template) => {
       const matchesSearch = `${t.name} ${t.subject}`
         .toLowerCase()
         .includes(search.toLowerCase());
-
       const matchesCategory =
         activeCategory === "all" || t.category === activeCategory;
-
       return matchesSearch && matchesCategory;
     });
   }, [search, activeCategory]);
 
-  const totalSlides = Math.ceil(filteredStarter.length / 3);
+  const totalSlides = Math.ceil(filteredStarter.length / itemsPerSlide);
 
-  /* ---------------- SWIPE LOGIC ---------------- */
+  const gridClass =
+    itemsPerSlide === 1
+      ? "grid-cols-1"
+      : itemsPerSlide === 2
+      ? "grid-cols-2"
+      : "grid-cols-3";
 
+  /* ── Swipe ── */
   function handleStart(clientX: number) {
     startX.current = clientX;
   }
 
   function handleEnd(clientX: number) {
     if (startX.current === null) return;
-
     const diff = startX.current - clientX;
-
-    if (diff > 50 && currentIndex < totalSlides - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    }
-
-    if (diff < -50 && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
-
+    if (diff > 50 && currentIndex < totalSlides - 1)
+      setCurrentIndex((p) => p + 1);
+    if (diff < -50 && currentIndex > 0) setCurrentIndex((p) => p - 1);
     startX.current = null;
   }
-
-  /* ---------------- UI ---------------- */
 
   return (
     <div className="space-y-6">
@@ -99,41 +116,37 @@ export function StarterSection({ search, onDuplicate, onPreview }: Props) {
           onMouseDown={(e) => handleStart(e.clientX)}
           onMouseUp={(e) => handleEnd(e.clientX)}
         >
-          {/* RIGHT FADE */}
+          {/* Fades */}
           <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-background to-transparent z-10" />
-
-          {/* LEFT FADE */}
           {currentIndex > 0 && (
             <div className="pointer-events-none absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-background to-transparent z-10" />
           )}
 
-          {/* LEFT ARROW */}
+          {/* Arrows */}
           {currentIndex > 0 && (
             <button
               type="button"
-              aria-label="Previous templates"
-              onClick={() => setCurrentIndex((prev) => prev - 1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-background border shadow rounded-full p-3 sm:p-2 hover:bg-muted transition"
+              aria-label="Previous"
+              onClick={() => setCurrentIndex((p) => p - 1)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-background border shadow rounded-full p-2 hover:bg-muted transition"
             >
-              <ChevronLeft />
+              <ChevronLeft size={18} />
             </button>
           )}
-
-          {/* RIGHT ARROW */}
           {currentIndex < totalSlides - 1 && (
             <button
               type="button"
-              aria-label="Next templates"
-              onClick={() => setCurrentIndex((prev) => prev + 1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-background border shadow rounded-full p-3 sm:p-2 hover:bg-muted transition"
+              aria-label="Next"
+              onClick={() => setCurrentIndex((p) => p + 1)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-background border shadow rounded-full p-2 hover:bg-muted transition"
             >
-              <ChevronRight />
+              <ChevronRight size={18} />
             </button>
           )}
 
-          {/* SLIDE TRACK */}
+          {/* Slide Track */}
           <div
-            className="flex gap-6"
+            className="flex gap-4"
             style={{
               transform: `translateX(-${currentIndex * 100}%)`,
               transition: "transform 0.4s ease",
@@ -142,10 +155,13 @@ export function StarterSection({ search, onDuplicate, onPreview }: Props) {
             {Array.from({ length: totalSlides }).map((_, slideIndex) => (
               <div
                 key={slideIndex}
-                className="min-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                className={`min-w-full grid ${gridClass} gap-4`}
               >
                 {filteredStarter
-                  .slice(slideIndex * 3, slideIndex * 3 + 3)
+                  .slice(
+                    slideIndex * itemsPerSlide,
+                    slideIndex * itemsPerSlide + itemsPerSlide
+                  )
                   .map((template) => (
                     <StarterCard
                       key={template.id}
@@ -158,7 +174,7 @@ export function StarterSection({ search, onDuplicate, onPreview }: Props) {
             ))}
           </div>
 
-          {/* DOTS */}
+          {/* Dots */}
           {totalSlides > 1 && (
             <div className="flex justify-center mt-6 gap-2">
               {Array.from({ length: totalSlides }).map((_, i) => (

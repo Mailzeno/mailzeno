@@ -4,24 +4,8 @@ import { motion } from "framer-motion";
 import { Power, Trash2, Loader2, Copy, X } from "lucide-react";
 import { resolveLogo } from "../utils/providerResolver";
 import { SMTPAccount } from "../hooks/useSMTP";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-} from "@/components/ui/drawer";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import {Drawer, DrawerContent,DrawerHeader,DrawerTitle,DrawerDescription,} from "@/components/ui/drawer";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,AlertDialogAction,AlertDialogTrigger,} from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 

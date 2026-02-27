@@ -26,7 +26,7 @@ const analyticsNav = [
 ];
 
 const systemNav = [
-  { name: "API Keys", href: "/dashboard/api", icon: Key }, // 👈 Added
+  { name: "API Keys", href: "/dashboard/api", icon: Key }, 
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
   { name: "Security", href: "/dashboard/security", icon: Shield },
 ];

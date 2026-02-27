@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Save, Eye, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Save, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import RichEditor from "@/components/editor/RichEditor";
 import { Button } from "@/components/ui/button";
@@ -34,36 +33,25 @@ export default function TemplateEditorShell({
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState(
-    `<h2>Hello {{name}},</h2><p>Start writing your email...</p>`,
+    `<h2>Hello {{name}},</h2><p>Start writing your email...</p>`
   );
 
   /* ---------------- Fetch Template (Edit Mode) ---------------- */
-
   useEffect(() => {
     if (mode !== "edit" || !templateId) return;
 
     const fetchTemplate = async () => {
       try {
         setInitialLoading(true);
-
         const res = await fetch(`/api/templates/${templateId}`);
         const result = await res.json();
-
-        if (!res.ok) {
-          throw new Error(result.message || "Failed to load template");
-        }
-
+        if (!res.ok) throw new Error(result.message || "Failed to load template");
         const template = result.data ?? result;
-
         setName(template.name || "");
         setSubject(template.subject || "");
         setBody(template.body || "");
       } catch (err: any) {
-        toast({
-          title: "Error",
-          description: err.message || "Failed to load template.",
-          variant: "destructive",
-        });
+        toast({ title: "Error", description: err.message || "Failed to load template.", variant: "destructive" });
       } finally {
         setInitialLoading(false);
       }
@@ -73,90 +61,52 @@ export default function TemplateEditorShell({
   }, [mode, templateId, toast]);
 
   /* ---------------- Starter Prefill ---------------- */
-
   useEffect(() => {
-    if (mode !== "create") return;
-    if (!starterId) return;
-
+    if (mode !== "create" || !starterId) return;
     const starter = starterTemplates.find((t) => t.id === starterId);
-
     if (!starter) return;
-
     setName(starter.name + " (Copy)");
     setSubject(starter.subject);
     setBody(starter.body);
-
     router.replace("/dashboard/templates/new", { scroll: false });
   }, [mode, starterId, router]);
 
-  /* ---------------- Save Logic ---------------- */
-
+  /* ---------------- Save ---------------- */
   const handleSave = async () => {
     if (!name.trim() || !subject.trim() || !body.trim()) {
-      toast({
-        title: "Missing fields",
-        description: "Please fill all fields before saving.",
-        variant: "destructive",
-      });
+      toast({ title: "Missing fields", description: "Please fill all fields before saving.", variant: "destructive" });
       return;
     }
 
     try {
       setSaving(true);
-
       const res = await fetch(
         mode === "edit" ? `/api/templates/${templateId}` : "/api/templates",
         {
           method: mode === "edit" ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, subject, body }),
-        },
+        }
       );
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to save template");
-      }
-
+      if (!res.ok) throw new Error(data.message || "Failed to save template");
       toast({
         title: mode === "edit" ? "Template updated" : "Template saved",
-        description:
-          mode === "edit"
-            ? "Your changes have been saved."
-            : "Your template has been saved successfully.",
+        description: mode === "edit" ? "Your changes have been saved." : "Your template has been saved successfully.",
       });
-
-      setTimeout(() => {
-        router.push("/dashboard/templates");
-      }, 600);
+      setTimeout(() => router.push("/dashboard/templates"), 600);
     } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message || "Something went wrong.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: err.message || "Something went wrong.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
 
   /* ---------------- Variables ---------------- */
-
-  const variables = [
-    "{{name}}",
-    "{{email}}",
-    "{{company}}",
-    "{{date}}",
-    "{{custom}}",
-  ];
-
-  const insertVariable = (v: string) => {
-    setBody((prev) => prev + " " + v);
-  };
+  const variables = ["{{name}}", "{{email}}", "{{company}}", "{{date}}", "{{custom}}"];
+  const insertVariable = (v: string) => setBody((prev) => prev + " " + v);
 
   /* ---------------- Skeleton ---------------- */
-
   if (initialLoading) {
     return (
       <div className="space-y-6">
@@ -168,49 +118,48 @@ export default function TemplateEditorShell({
   }
 
   /* ---------------- UI ---------------- */
-
   return (
-    <div className="space-y-6">
-      {/* HEADER */}
+    <div className="space-y-4 sm:space-y-6">
+
+      {/* BACK */}
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 pb-4 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition"
+        className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition"
       >
         <ArrowLeft size={16} />
         Back
       </button>
-      <div className="flex items-center justify-between">
+
+      {/* HEADER — name input + action buttons */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Template Name"
-          className="text-xl border rounded-md p-2 font-semibold bg-transparent focus:outline-none"
+          className="text-lg sm:text-xl font-semibold bg-transparent border rounded-md px-3 py-2 focus:outline-none focus:border-primary transition w-full sm:max-w-sm"
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
-            variant={"outline"}
+            variant="outline"
             onClick={() => setPreviewOpen(true)}
-            className="px-4 py-2.5 text-xs rounded-md flex gap-1 border hover:bg-muted transition"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 text-xs rounded-md border hover:bg-muted transition"
             type="button"
           >
-            Preview <Eye className="w-4 h-4" />
+            <Eye className="w-4 h-4" />
+            Preview
           </Button>
 
           <Button
-            variant={"main"}
+            variant="main"
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-1.5 bg-primary rounded-md flex items-center gap-2 transition disabled:opacity-50"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary rounded-md transition disabled:opacity-50"
           >
-            <Save size={16} />
+            <Save size={15} />
             {saving
-              ? mode === "edit"
-                ? "Updating..."
-                : "Saving..."
-              : mode === "edit"
-                ? "Update"
-                : "Save"}
+              ? mode === "edit" ? "Updating..." : "Saving..."
+              : mode === "edit" ? "Update" : "Save"}
           </Button>
         </div>
       </div>
@@ -224,8 +173,8 @@ export default function TemplateEditorShell({
       />
 
       {/* VARIABLES */}
-      <div className="flex flex-wrap gap-2">
-        <span className="text-sm text-muted-foreground">Variables:</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs text-muted-foreground">Variables:</span>
         {variables.map((v) => (
           <button
             key={v}
@@ -247,33 +196,40 @@ export default function TemplateEditorShell({
         />
       </div>
 
-      {/* PREVIEW MODAL */}
+      {/* PREVIEW MODAL — full screen on mobile, centered modal on desktop */}
       {previewOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4"
           onClick={() => setPreviewOpen(false)}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-5xl rounded-xl border bg-card shadow-2xl overflow-hidden"
+            className="
+              w-full h-[92dvh] rounded-t-2xl
+              sm:h-auto sm:max-h-[90vh] sm:rounded-xl sm:max-w-5xl
+              border bg-card shadow-2xl overflow-hidden flex flex-col
+            "
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-muted/30">
-              <h3 className="text-sm font-semibold tracking-tight">
-                Email Preview
-              </h3>
-
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b bg-muted/30 shrink-0">
+              {/* Drag handle — visible only on mobile */}
+              <div className="sm:hidden absolute left-1/2 -translate-x-1/2 top-2 w-10 h-1 rounded-full bg-muted-foreground/30" />
+              <h3 className="text-sm font-semibold tracking-tight">Email Preview</h3>
               <button
                 onClick={() => setPreviewOpen(false)}
-                className="text-sm px-3 py-1.5 rounded-md hover:bg-muted transition"
+                className="p-1.5 rounded-md hover:bg-muted transition"
               >
-                Close
+                <X size={16} />
               </button>
             </div>
 
-            <PreviewTabs form={{ body }} />
+            {/* Scrollable preview content */}
+            <div className="overflow-y-auto flex-1">
+              <PreviewTabs form={{ body }} />
+            </div>
           </motion.div>
         </div>
       )}

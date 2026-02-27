@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function NewTemplatePage() {
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="md:p-8 max-w-7xl mx-auto">
       <TemplateEditorShell mode="create" />
     </div>
   );

@@ -78,7 +78,7 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10">
+    <div className=" md:p-8 max-w-7xl mx-auto space-y-10">
       <button
         onClick={() => router.back()}
         className="flex items-center pt-0 gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition"

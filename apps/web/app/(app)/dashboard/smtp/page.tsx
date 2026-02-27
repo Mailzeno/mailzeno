@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Plus, ArrowLeft } from "lucide-react";
 import SMTPCard from "@/features/smtp/components/SMTPCard";
 import SMTPSkeleton from "@/features/smtp/components/SMTPSkeleton";
@@ -8,27 +7,21 @@ import { useSMTP } from "@/features/smtp/hooks/useSMTP";
 import { useRouter } from "next/navigation";
 
 export default function SMTPPage() {
-  const router = useRouter()
-  const {
-    accounts,
-    loading,
-    processingId,
-    toggleDefault,
-    remove,
-  } = useSMTP();
+  const router = useRouter();
+  const { accounts, loading, processingId, toggleDefault, remove } = useSMTP();
 
   return (
-    <div className="p-4 space-y-8">
+    <div className="md:p-6 space-y-8">
 
       <button
         onClick={() => router.back()}
-        className="flex items-center pt-0 gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition"
+        className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition"
       >
         <ArrowLeft size={16} />
         Back
       </button>
-      <div className="flex items-center justify-between">
-        
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">SMTP Accounts</h1>
           <p className="text-sm text-muted-foreground">
@@ -36,13 +29,14 @@ export default function SMTPPage() {
           </p>
         </div>
 
-        <Link
-          href="/dashboard/smtp/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-secondary-foreground border border-btn-border hover:opacity-90 hover:scale-105 transition"
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard/smtp/new")}
+          className="flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-primary text-secondary-foreground border border-btn-border hover:opacity-90 transition w-full sm:w-auto"
         >
           <Plus size={16} />
           Add SMTP
-        </Link>
+        </button>
       </div>
 
       {loading ? (
@@ -52,13 +46,14 @@ export default function SMTPPage() {
           <p className="text-muted-foreground mb-4">
             No SMTP accounts connected yet.
           </p>
-          <Link
-            href="/dashboard/smtp/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md hover:bg-primary/80 border border-btn-border bg-primary text-secondry-foreground"
+          <button
+            type="button"
+            onClick={() => router.push("/dashboard/smtp/new")}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md hover:bg-primary/80 border border-btn-border bg-primary text-secondary-foreground"
           >
             <Plus size={16} />
             Add First SMTP
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="grid gap-4">

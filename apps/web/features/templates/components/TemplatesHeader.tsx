@@ -1,7 +1,11 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
 export function TemplatesHeader() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
@@ -11,13 +15,14 @@ export function TemplatesHeader() {
         </p>
       </div>
 
-      <Link
-        href="/dashboard/templates/new"
+      <button
+        type="button"
+        onClick={() => router.push("/dashboard/templates/new")}
         className="inline-flex items-center justify-center gap-2 border border-btn-border bg-primary text-secondry-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition w-full sm:w-auto"
       >
         <Plus size={16} />
         New Template
-      </Link>
+      </button>
     </div>
   );
 }
