@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import Image from "next/image";
 
@@ -13,11 +13,7 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle, isOpen }: HeaderProps) {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted] = useState(true);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -31,7 +27,7 @@ export function Header({ onMenuToggle, isOpen }: HeaderProps) {
 
         <Link href="/app" className="flex items-center gap-1 no-underline">
           <Image src="/logo.svg" alt="Mailzeno Logo" width={50} height={50} />
-          <span className="text-lg font-semibold text-text-heading tracking-tight">
+          <span className="text-2xl font-bold text-text-heading tracking-tight">
             mailzeno
           </span>
           <span className="text-[0.6875rem] font-medium text-text-heading px-[0.4em] py-[0.1em] rounded border border-border-primary bg-bg-tertiary sm:inline">

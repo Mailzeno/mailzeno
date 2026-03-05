@@ -15,7 +15,7 @@ export function DocsLayout({ children }: { children: React.ReactNode }) {
         onMenuToggle={() => setSidebarOpen((prev) => !prev)}
       />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:ml-[260px] mt-14 min-h-[calc(100vh-3.5rem)] transition-colors duration-300">
+      <div className="lg:ml-[260px] mt-20 min-h-[calc(100vh-3.5rem)] transition-colors duration-300">
         <div className="flex gap-6 xl:gap-12 max-w-[1100px] mx-auto px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
           <main className="prose animate-fade-in flex-1 min-w-0 overflow-x-hidden">
             {children}

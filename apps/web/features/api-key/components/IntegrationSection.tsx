@@ -110,7 +110,6 @@ await mailZeno.emails.send({
                 marginBottom: "0",
                 minWidth: "100%",
                 whiteSpace: "pre",
-                background: "rgb(18, 18, 18)",
               }}
               wrapLines={false}
               wrapLongLines={false}

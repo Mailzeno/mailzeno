@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface TocItem {
   id: string;
@@ -111,6 +112,14 @@ export function TableOfContents() {
           );
         })}
       </ul>
+      <div className="mt-6 pt-4 border-t border-border-primary">
+        <Link
+          href="https://mailzeno.dev"
+          className="inline-flex items-center px-3 py-2 text-xs bg-bg-secondary rounded-full font-medium text-accent-secondary hover:text-accent-primary transition-colors"
+        >
+          Go to main app
+        </Link>
+      </div>
     </nav>
   );
 }
