@@ -17,10 +17,6 @@ export function TemplatesHeader() {
       <div>
         <div className="flex items-center gap-2.5">
           <h1 className="text-2xl font-bold">Templates</h1>
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary border border-primary/20">
-            <Sparkles size={10} className="inline mr-1" />
-            Editor
-          </span>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
           Build and manage reusable email content with our advanced editor
