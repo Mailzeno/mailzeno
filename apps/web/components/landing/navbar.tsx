@@ -60,7 +60,7 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur md:border-b ">
+    <header className="sticky top-0 z-50 backdrop-blur border-b ">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6 ">
         {/* Logo */}
         <Link href="/" className="flex items-center text-2xl font-extrabold">
@@ -139,7 +139,7 @@ export function Navbar() {
             }`}
           />
           <span
-            className={`h-0.5 w-3 bg-foreground transition-all ${
+            className={`h-0.5 w-3 rounded-full bg-foreground transition-all ${
               mobileOpen ? "-rotate-45 w-5 -translate-y-2" : "translate-x-1"
             }`}
           />
