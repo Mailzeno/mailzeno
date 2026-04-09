@@ -3,7 +3,7 @@ import { PLAN_CONFIG, PlanType } from "@/lib/plans";
 
 const redis = Redis.fromEnv();
 
-type Scope = "api" | "user";
+type Scope = "api" | "user" | "form";
 
 interface RateLimitResult {
   allowed: boolean;
