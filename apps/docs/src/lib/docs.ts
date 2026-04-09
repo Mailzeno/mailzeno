@@ -23,6 +23,7 @@ export const navigation: NavSection[] = [
         items: [
             { title: "Sending Emails", href: "/sending-emails" },
             { title: "Templates", href: "/templates" },
+            { title: " Forms", href: "/forms", badge: "New" },
             { title: "SDK Usage", href: "/sdk" },
         ],
     },
@@ -38,7 +39,6 @@ export const navigation: NavSection[] = [
     {
         title: "More",
         items: [
-            { title: "MailZeno Forms", href:"#", badge: "Soon" },
             { title: "Webhooks", href: "/webhooks", badge: "Soon" },
             { title: "Changelog", href: "/changelog" },
         ],

@@ -89,6 +89,87 @@ All error responses follow a consistent structure:
   </tbody>
 </table>
 
+## Forms API error codes
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Code</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>invalid_json</code></td>
+      <td>Request body is not valid JSON</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>invalid_body</code></td>
+      <td>Request payload is missing or malformed</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>missing_form_identifier</code></td>
+      <td>Missing both <code>form_slug</code> and <code>public_api_key</code></td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>validation_error</code></td>
+      <td>Submitted values failed schema validation</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>unknown_field</code></td>
+      <td>Unknown field submitted while schema mode is strict</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>spam_detected</code></td>
+      <td>Honeypot field was filled</td>
+    </tr>
+    <tr>
+      <td><code>401</code></td>
+      <td><code>invalid_public_api_key</code></td>
+      <td>Provided public key does not match any active form</td>
+    </tr>
+    <tr>
+      <td><code>403</code></td>
+      <td><code>origin_not_allowed</code></td>
+      <td>Request origin is blocked by form allowlist</td>
+    </tr>
+    <tr>
+      <td><code>404</code></td>
+      <td><code>form_not_found</code></td>
+      <td>Requested form does not exist (or is inactive)</td>
+    </tr>
+    <tr>
+      <td><code>413</code></td>
+      <td><code>payload_too_large</code></td>
+      <td>Submission body exceeded maximum allowed size</td>
+    </tr>
+    <tr>
+      <td><code>415</code></td>
+      <td><code>unsupported_content_type</code></td>
+      <td>Content-Type is not accepted by the endpoint</td>
+    </tr>
+    <tr>
+      <td><code>429</code></td>
+      <td><code>rate_limited</code></td>
+      <td>Too many submissions in current window</td>
+    </tr>
+    <tr>
+      <td><code>500</code></td>
+      <td><code>internal_error</code></td>
+      <td>Unexpected server-side failure</td>
+    </tr>
+  </tbody>
+</table>
+
+For full endpoint usage and integration examples, see [MailZeno Forms](/forms).
+
 ## Core engine error codes
 
 The `@mailzeno/core` SMTP engine provides specific error classes for SMTP-level failures:

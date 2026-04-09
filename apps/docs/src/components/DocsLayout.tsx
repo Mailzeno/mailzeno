@@ -27,7 +27,7 @@ export function DocsLayout({ children }: { children: React.ReactNode }) {
 
         {/* Footer */}
         <footer className="border-t border-border-primary py-6 px-4 sm:px-8 text-center text-xs text-text-tertiary">
-          &copy; {new Date().getFullYear()} Mailzeno <span className="bg-bg-tertiary px-1.5 py-0.5 border border-border-secondary rounded-sm">Docs</span>
+          &copy; {new Date().getFullYear()} MailZeno <span className="bg-bg-tertiary px-1.5 py-0.5 border border-border-secondary rounded-sm">Docs</span>
         </footer>
       </div>
     </>

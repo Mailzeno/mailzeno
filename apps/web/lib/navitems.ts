@@ -1,6 +1,7 @@
 import {
   BarChart,
   FileText,
+  Inbox,
   LayoutDashboard,
   ScrollText,
   Send,
@@ -8,11 +9,13 @@ import {
   Settings,
   Shield,
   Key,
+  FileInput
 } from "lucide-react";
 
 const mainNav = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Send Email", href: "/dashboard/send", icon: Send },
+  { name: "Forms", href: "/dashboard/forms", icon: FileInput },
 ];
 
 const configNav = [
@@ -22,6 +25,7 @@ const configNav = [
 
 const analyticsNav = [
   { name: "Logs", href: "/dashboard/logs", icon: ScrollText },
+  { name: "Form Submissions", href: "/dashboard/forms/submissions", icon: Inbox },
   { name: "Usage", href: "/dashboard/usage", icon: BarChart },
 ];
 

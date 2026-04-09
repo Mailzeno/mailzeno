@@ -12,11 +12,22 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // 👇 YE ADD KARO
   transpilePackages: ['@mailzeno/core', '@mailzeno/client'],
 
   async redirects() {
     return [
+      {
+        source: "/f/:path*",
+        has: [{ type: "host", value: "forms.mz" }],
+        destination: "https://mailzeno.dev/f/:path*",
+        permanent: true,
+      },
+      {
+        source: "/f/:path*",
+        has: [{ type: "host", value: "www.forms.mz" }],
+        destination: "https://mailzeno.dev/f/:path*",
+        permanent: true,
+      },
       {
         source: "/docs",
         destination: "https://docs.mailzeno.dev",
@@ -26,6 +37,16 @@ const nextConfig = {
         source: "/docs/:path*",
         destination: "https://docs.mailzeno.dev/:path*",
         permanent: true,
+      },
+    ];
+  },
+
+  // api proxy
+  async rewrites() {
+    return [
+      {
+        source: "/v1/:path*",
+        destination: "/api/v1/:path*",
       },
     ];
   },

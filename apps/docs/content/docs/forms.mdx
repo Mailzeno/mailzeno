@@ -1,0 +1,299 @@
+# MailZeno Forms
+
+Build hosted forms, embed them on any website, and accept secure submissions through MailZeno.
+
+MailZeno Forms supports:
+
+- Hosted form pages (`/f/:slug`)
+- Short links (`/s/:code`)
+- No-code iframe embeds
+- Script-based auto-submit integration
+- Public API key or slug-based submission
+- Conditional fields and schema validation modes
+- Built-in rate limiting and spam honeypot
+
+## Forms workflow
+
+<Steps>
+  <Step number="1" title="Create a Form in Dashboard">
+    Go to your dashboard, create a form, and configure fields/settings.
+  </Step>
+  <Step number="2" title="Choose Submission Mode">
+    Use hosted page, embed script, or direct SDK/script submit.
+  </Step>
+  <Step number="3" title="Publish and Integrate">
+    Share the hosted URL, short link, or embed snippet.
+  </Step>
+  <Step number="4" title="Collect and Process Submissions">
+    Submissions are validated, rate-limited, and stored with metadata.
+  </Step>
+</Steps>
+
+## Hosted form URL
+
+Each form automatically gets a public URL:
+
+<CodeBlock language="text">
+{`https://mailzeno.dev/f/<form-slug>`}
+</CodeBlock>
+
+And an optional short URL:
+
+<CodeBlock language="text">
+{`https://mailzeno.dev/s/<short-code>`}
+</CodeBlock>
+
+## Embed form (no code backend)
+
+Use the embed endpoint in any HTML page:
+
+<CodeBlock language="html" title="Hosted Embed">
+{`<div data-mailzeno-form="your-form-slug" data-height="680px"></div>
+<script src="https://mailzeno.dev/api/v1/forms/embed/your-form-slug" async></script>`}
+</CodeBlock>
+
+This renders an iframe-hosted form inside your page.
+
+## Script + form slug integration
+
+For native HTML forms, load the forms script and tag your form:
+
+<CodeBlock language="html" title="Auto Submit via Script (example code)">
+{`<script src="https://cdn.jsdelivr.net/gh/mailzeno/mailzeno@main/apps/web/public/mz.forms.js" defer></script>
+
+<form
+  data-mz-form-slug="your-form-slug"
+  data-mz-public-key="fpk_your_public_key_optional"
+  data-mz-success-message="Thanks. We received your request."
+>
+  <input name="name" required />
+  <input name="email" type="email" required />
+
+  <!-- add custom fields (allowed only in flexible modes) -->
+
+  <button type="submit" data-loading-text="Submitting...">Submit</button>
+</form>
+
+<p data-mz-success hidden></p>
+<p data-mz-error hidden></p>`}
+</CodeBlock>
+
+If you want to self-host from your app domain, use:
+
+<CodeBlock language="html" title="Self-hosted Script (optional)">
+{`<script src="https://mailzeno.dev/mz.forms.js" defer></script>`}
+</CodeBlock>
+
+<Callout type="info" title="Public key behavior">
+`data-mz-public-key` is optional when using slug-based submit. If present, it is validated.
+</Callout>
+
+## API endpoints
+
+### Public endpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Path</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>GET</code></td>
+      <td><code>/api/v1/forms/:slug</code></td>
+      <td>Fetch public form schema and public-safe settings</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td>
+      <td><code>/api/v1/forms/submit/:slug</code></td>
+      <td>Submit form data using slug route</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td>
+      <td><code>/api/v1/forms/public/submit</code></td>
+      <td>Submit form data using slug or public key in body/header</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td>
+      <td><code>/api/v1/forms/embed/:slug</code></td>
+      <td>Serve hosted iframe embed script</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td>
+      <td><code>/api/v1/forms/sdk</code></td>
+      <td>Serve loader script for forms SDK</td>
+    </tr>
+  </tbody>
+</table>
+
+### Authenticated dashboard endpoints
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Path</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>GET</code></td>
+      <td><code>/api/v1/forms</code></td>
+      <td>List your forms</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td>
+      <td><code>/api/v1/forms</code></td>
+      <td>Create a form</td>
+    </tr>
+    <tr>
+      <td><code>DELETE</code></td>
+      <td><code>/api/v1/forms</code></td>
+      <td>Delete a form</td>
+    </tr>
+    <tr>
+      <td><code>PATCH</code></td>
+      <td><code>/api/v1/forms</code></td>
+      <td>Regenerate public API key</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td>
+      <td><code>/api/v1/forms/manage/:id</code></td>
+      <td>Fetch form for editing</td>
+    </tr>
+    <tr>
+      <td><code>PATCH</code></td>
+      <td><code>/api/v1/forms/manage/:id</code></td>
+      <td>Update schema/settings</td>
+    </tr>
+  </tbody>
+</table>
+
+## Submission payload
+
+For direct submit endpoints, send JSON body data by field name:
+
+<CodeBlock language="json" title="Example Payload">
+{`{
+  "name": "Aman",
+  "email": "aman@example.com",
+  "message": "Need pricing details"
+}`}
+</CodeBlock>
+
+Or for `POST /api/v1/forms/public/submit`, send explicit identifiers:
+
+<CodeBlock language="json" title="Public Submit with slug">
+{`{
+  "form_slug": "contact-us",
+  "data": {
+    "name": "Aman",
+    "email": "aman@example.com",
+    "message": "Need pricing details"
+  }
+}`}
+</CodeBlock>
+
+<CodeBlock language="json" title="Public Submit with public key">
+{`{
+  "public_api_key": "fpk_xxxxx",
+  "data": {
+    "name": "Aman",
+    "email": "aman@example.com"
+  }
+}`}
+</CodeBlock>
+
+## Schema modes
+
+Forms support two schema modes:
+
+- `strict`: unknown fields are rejected
+- `flexible`: unknown fields are accepted and stored under `_extra_fields`
+
+Use `strict` for controlled integrations and `flexible` for evolving forms.
+
+## Security and anti-abuse
+
+MailZeno Forms includes:
+
+- Origin allowlist support (`allowed_origins`)
+- Field-level validation (required/type/options)
+- Honeypot spam field (`company`)
+- Per-form + IP rate limiting
+- Public-safe settings exposure in public schema endpoint
+
+<Callout type="warning" title="Client-side safety">
+Never place secrets in frontend form markup. Public form keys are intended to be public identifiers, not private credentials.
+</Callout>
+
+## Rate limiting
+
+Forms use the same plan-aware limiter as API traffic with a dedicated `form` scope. Exceeding limit returns:
+
+- HTTP `429`
+- `X-RateLimit-Limit`
+- `X-RateLimit-Remaining`
+- `X-RateLimit-Reset`
+- `Retry-After` (when applicable)
+
+See [Rate Limits](/rate-limits) for details.
+
+## Common errors
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Code</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>validation_error</code></td>
+      <td>Required field missing or invalid field value</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>unknown_field</code></td>
+      <td>Extra field rejected in strict schema mode</td>
+    </tr>
+    <tr>
+      <td><code>400</code></td>
+      <td><code>spam_detected</code></td>
+      <td>Honeypot field was filled</td>
+    </tr>
+    <tr>
+      <td><code>401</code></td>
+      <td><code>invalid_public_api_key</code></td>
+      <td>Provided public key is invalid</td>
+    </tr>
+    <tr>
+      <td><code>403</code></td>
+      <td><code>origin_not_allowed</code></td>
+      <td>Request origin is not allowed for this form</td>
+    </tr>
+    <tr>
+      <td><code>404</code></td>
+      <td><code>form_not_found</code></td>
+      <td>Form slug/key does not exist or inactive</td>
+    </tr>
+    <tr>
+      <td><code>429</code></td>
+      <td><code>rate_limited</code></td>
+      <td>Too many submissions from same source</td>
+    </tr>
+  </tbody>
+</table>
+
+## Next steps
+
+- [API Reference](/api-reference)
+- [Error Codes](/error-codes)
+- [Rate Limits](/rate-limits)
