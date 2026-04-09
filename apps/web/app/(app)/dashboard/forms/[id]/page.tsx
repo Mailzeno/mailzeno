@@ -223,7 +223,7 @@ export default async function FormDetailPage({
           <p className="text-sm text-muted-foreground mt-1">
             {schemaMode === "strict"
               ? "Strict (unknown fields blocked)"
-              : "Flexible (unknown fields stored in _extra_fields)"}
+              : "Flexible (unknown fields stored as top-level keys)"}
           </p>
         </div>
       </div>

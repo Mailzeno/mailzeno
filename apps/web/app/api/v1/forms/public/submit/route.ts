@@ -257,7 +257,7 @@ export async function POST(req: Request) {
 
     const submissionData: Record<string, unknown> = { ...sanitized };
     if (schemaMode === "flexible" && Object.keys(extra).length > 0) {
-      submissionData._extra_fields = extra;
+      Object.assign(submissionData, extra);
     }
 
     const ip = getClientIp(req);

@@ -253,7 +253,7 @@ export async function POST(
 
     const submissionData: Record<string, unknown> = { ...sanitized };
     if (schemaMode === "flexible" && Object.keys(extra).length > 0) {
-      submissionData._extra_fields = extra;
+      Object.assign(submissionData, extra);
     }
 
     // Extract client metadata

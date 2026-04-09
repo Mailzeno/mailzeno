@@ -392,7 +392,7 @@ export default function CreateFormPage() {
                 <option value="strict">Strict (block unknown fields)</option>
               </select>
               <p className="text-xs text-muted-foreground">
-                Flexible accepts extra fields and stores them under _extra_fields. Strict only accepts schema field names.
+                Flexible accepts extra fields and stores them using their original field names. Strict only accepts schema field names.
               </p>
             </div>
 
