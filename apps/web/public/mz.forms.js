@@ -1,5 +1,45 @@
 (function (w, d) {
-  var DEFAULT_ENDPOINT = "/api/v1/forms/public/submit";
+  var FALLBACK_SERVICE_ORIGIN = "https://mailzeno.dev";
+  var KNOWN_STATIC_HOSTS = {
+    "cdn.jsdelivr.net": true,
+    "raw.githubusercontent.com": true,
+    "raw.githack.com": true,
+    "unpkg.com": true,
+  };
+
+  function resolveDefaultEndpoint() {
+    var script = d.currentScript;
+    var scriptAttrEndpoint = script &&
+      (script.getAttribute("data-mz-endpoint") ||
+        script.getAttribute("data-mailzeno-endpoint"));
+
+    if (scriptAttrEndpoint) {
+      return scriptAttrEndpoint;
+    }
+
+    var globalEndpoint = w.MZ_FORMS_ENDPOINT || w.MAILZENO_FORMS_ENDPOINT;
+    if (globalEndpoint) {
+      return String(globalEndpoint);
+    }
+
+    var scriptSrc = script && script.getAttribute("src");
+    if (scriptSrc) {
+      try {
+        var parsed = new URL(scriptSrc, w.location.href);
+        var host = String(parsed.host || "").toLowerCase();
+
+        if (!KNOWN_STATIC_HOSTS[host]) {
+          return parsed.origin.replace(/\/$/, "") + "/api/v1/forms/public/submit";
+        }
+      } catch (_error) {
+        // Ignore URL parsing failures and fall back to hosted API origin.
+      }
+    }
+
+    return FALLBACK_SERVICE_ORIGIN + "/api/v1/forms/public/submit";
+  }
+
+  var DEFAULT_ENDPOINT = resolveDefaultEndpoint();
   var SDK_VERSION = "2.0.0";
   var schemaCache = {};
 
@@ -20,6 +60,67 @@
     return String(value || "")
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
+  }
+
+  function splitTokens(value) {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  function tokenMatchScore(fieldName, candidateKey) {
+    var fieldTokens = splitTokens(fieldName);
+    var candidateTokens = splitTokens(candidateKey);
+
+    if (fieldTokens.length === 0 || candidateTokens.length === 0) return 0;
+
+    var candidateSet = {};
+    candidateTokens.forEach(function (token) {
+      candidateSet[token] = true;
+    });
+
+    var overlap = 0;
+    fieldTokens.forEach(function (token) {
+      if (candidateSet[token]) overlap += 1;
+    });
+
+    return overlap / Math.max(fieldTokens.length, candidateTokens.length);
+  }
+
+  function containsHeuristicMatch(fieldName, candidateKey) {
+    var a = normalizeKey(fieldName);
+    var b = normalizeKey(candidateKey);
+
+    if (!a || !b) return false;
+    if (a.length < 4 && b.length < 4) return false;
+
+    return a.indexOf(b) >= 0 || b.indexOf(a) >= 0;
+  }
+
+  function findBestSemanticMatch(fieldName, rawLookup) {
+    var best = null;
+    var bestScore = 0;
+
+    Object.keys(rawLookup).forEach(function (rawKey) {
+      var entry = rawLookup[rawKey];
+      if (!entry) return;
+
+      var tokenScore = tokenMatchScore(fieldName, rawKey);
+      var containsBoost = containsHeuristicMatch(fieldName, rawKey) ? 0.25 : 0;
+      var score = tokenScore + containsBoost;
+
+      if (score > bestScore) {
+        bestScore = score;
+        best = entry;
+      }
+    });
+
+    // Keep this strict enough to avoid incorrect remapping.
+    return bestScore >= 0.5 ? best : null;
   }
 
   function editDistance(a, b) {
@@ -133,10 +234,12 @@
 
     var exactLookup = {};
     var normalizedLookup = {};
+    var rawLookup = {};
 
     Object.keys(rawData || {}).forEach(function (rawKey) {
       exactLookup[rawKey] = rawData[rawKey];
       normalizedLookup[normalizeKey(rawKey)] = { key: rawKey, value: rawData[rawKey] };
+      rawLookup[rawKey] = { key: rawKey, value: rawData[rawKey] };
     });
 
     schemaFields.forEach(function (field) {
@@ -172,6 +275,13 @@
       if (fuzzy) {
         result[fieldName] = fuzzy.value;
         consumedKeys[fuzzy.key] = true;
+        return;
+      }
+
+      var semantic = findBestSemanticMatch(fieldName, rawLookup);
+      if (semantic && !consumedKeys[semantic.key]) {
+        result[fieldName] = semantic.value;
+        consumedKeys[semantic.key] = true;
       }
     });
 
