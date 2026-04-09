@@ -1,6 +1,7 @@
 import {
   BarChart,
   FileText,
+  Inbox,
   LayoutDashboard,
   ScrollText,
   Send,
@@ -24,6 +25,7 @@ const configNav = [
 
 const analyticsNav = [
   { name: "Logs", href: "/dashboard/logs", icon: ScrollText },
+  { name: "Form Submissions", href: "/dashboard/forms/submissions", icon: Inbox },
   { name: "Usage", href: "/dashboard/usage", icon: BarChart },
 ];
 

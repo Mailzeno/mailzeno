@@ -257,7 +257,7 @@ export default async function FormDetailPage({
           </pre>
           <p className="text-xs text-muted-foreground">
             Recommended: use slug based submit (data-mz-form-slug). Public key
-            fallback supported. SDK URL: {sdkScript}
+            fallback supported.
           </p>
         </div>
       </div>

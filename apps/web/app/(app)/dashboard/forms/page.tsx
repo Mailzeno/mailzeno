@@ -180,15 +180,23 @@ export default function FormsPage() {
           </p>
         </div>
 
-        <Link href="/dashboard/forms/new">
-          <Button
-            variant={"main"}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg border-btn-border border text-sm font-medium transition"
-          >
-            <Plus className="w-4 h-4" />
-            Create Form
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/forms/submissions">
+            <Button variant="outline" className="text-sm">
+              Submissions
+            </Button>
+          </Link>
+
+          <Link href="/dashboard/forms/new">
+            <Button
+              variant={"main"}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg border-btn-border border text-sm font-medium transition"
+            >
+              <Plus className="w-4 h-4" />
+              Create Form
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Content */}
