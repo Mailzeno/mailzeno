@@ -103,7 +103,7 @@ export async function POST(req: Request) {
         ? rawSettings.notify_email.trim()
         : "";
 
-    const schemaMode = rawSettings?.schema_mode === "flexible" ? "flexible" : "strict";
+    const schemaMode = rawSettings?.schema_mode === "strict" ? "strict" : "flexible";
 
     const publicApiKey = `fpk_${randomBytes(18).toString("base64url")}`;
 

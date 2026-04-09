@@ -40,7 +40,7 @@
   }
 
   var DEFAULT_ENDPOINT = resolveDefaultEndpoint();
-  var SDK_VERSION = "2.1.0";
+  var SDK_VERSION = "2.2.0";
   var schemaCache = {};
 
   function toAbsoluteUrl(pathOrUrl) {
@@ -219,27 +219,6 @@
     return error;
   }
 
-  function getMappedFieldName(formEl, sourceKey) {
-    var escaped = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(sourceKey) : sourceKey;
-    var node = null;
-
-    try {
-      node = formEl.querySelector('[name="' + escaped + '"]');
-    } catch (_error) {
-      node = null;
-    }
-
-    if (!node || !node.getAttribute) {
-      return sourceKey;
-    }
-
-    return (
-      node.getAttribute("data-mz-field") ||
-      node.getAttribute("data-mailzeno-field") ||
-      sourceKey
-    );
-  }
-
   function appendValue(target, key, value) {
     if (target[key] === undefined) {
       target[key] = value;
@@ -250,13 +229,12 @@
     }
   }
 
-  function formDataToObject(formData, formEl) {
+  function formDataToObject(formData) {
     var data = {};
 
     formData.forEach(function (value, key) {
       if (typeof value !== "string") return;
-      var mappedKey = getMappedFieldName(formEl, key);
-      appendValue(data, mappedKey, value);
+      appendValue(data, key, value);
     });
 
     return data;
@@ -345,8 +323,8 @@
     });
 
     Object.keys(rawData || {}).forEach(function (rawKey) {
-      if (!consumedKeys[rawKey] && rawKey === "company") {
-        result.company = rawData[rawKey];
+      if (!consumedKeys[rawKey]) {
+        result[rawKey] = rawData[rawKey];
       }
     });
 
@@ -471,7 +449,7 @@
       "";
 
     var formData = new FormData(formEl);
-    var rawData = formDataToObject(formData, formEl);
+    var rawData = formDataToObject(formData);
     var data = rawData;
 
     if (slug) {

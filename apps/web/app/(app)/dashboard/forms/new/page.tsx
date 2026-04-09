@@ -34,7 +34,7 @@ export default function CreateFormPage() {
   );
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [notifyEmail, setNotifyEmail] = useState("");
-  const [schemaMode, setSchemaMode] = useState<"strict" | "flexible">("strict");
+  const [schemaMode, setSchemaMode] = useState<"strict" | "flexible">("flexible");
   const [loading, setLoading] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
@@ -388,11 +388,11 @@ export default function CreateFormPage() {
                 }
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               >
-                <option value="strict">Strict (recommended)</option>
                 <option value="flexible">Flexible (allow extra custom fields)</option>
+                <option value="strict">Strict (block unknown fields)</option>
               </select>
               <p className="text-xs text-muted-foreground">
-                Strict blocks unknown fields. Flexible accepts extras and stores them under _extra_fields.
+                Flexible accepts extra fields and stores them under _extra_fields. Strict only accepts schema field names.
               </p>
             </div>
 
