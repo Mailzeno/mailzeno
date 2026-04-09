@@ -97,7 +97,7 @@ export default function EditFormPage() {
   );
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [notifyEmail, setNotifyEmail] = useState("");
-  const [schemaMode, setSchemaMode] = useState<"strict" | "flexible">("strict");
+  const [schemaMode, setSchemaMode] = useState<"strict" | "flexible">("flexible");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -152,7 +152,7 @@ export default function EditFormPage() {
         setNotifyEmail(
           typeof parsedSettings.notify_email === "string" ? parsedSettings.notify_email : ""
         );
-        setSchemaMode(parsedSettings.schema_mode === "flexible" ? "flexible" : "strict");
+        setSchemaMode(parsedSettings.schema_mode === "strict" ? "strict" : "flexible");
       } catch (error) {
         toast({
           title: "Failed to load form",
@@ -514,8 +514,8 @@ export default function EditFormPage() {
                 }
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               >
-                <option value="strict">Strict (recommended)</option>
                 <option value="flexible">Flexible (allow extra custom fields)</option>
+                <option value="strict">Strict (block unknown fields)</option>
               </select>
             </div>
 

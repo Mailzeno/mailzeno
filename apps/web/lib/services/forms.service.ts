@@ -24,7 +24,7 @@ export function parseFormSettings(input: unknown): FormSettings {
 
 export function resolveFormSchemaMode(settings: unknown): FormSchemaMode {
   const parsed = parseFormSettings(settings);
-  return parsed.schema_mode === "flexible" ? "flexible" : "strict";
+  return parsed.schema_mode === "strict" ? "strict" : "flexible";
 }
 
 function escapeHtml(value: string) {

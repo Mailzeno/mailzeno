@@ -81,7 +81,7 @@ export async function PATCH(
       "Thanks! Your response has been submitted.";
     const emailEnabled = Boolean(rawSettings?.email_enabled ?? false);
     const notifyEmail = toTrimmedString(rawSettings?.notify_email);
-    const schemaMode = rawSettings?.schema_mode === "flexible" ? "flexible" : "strict";
+    const schemaMode = rawSettings?.schema_mode === "strict" ? "strict" : "flexible";
 
     const { data: existingForm, error: existingError } = await supabase
       .from("forms")
