@@ -213,7 +213,7 @@ Or for `POST /api/v1/forms/public/submit`, send explicit identifiers:
 Forms support two schema modes:
 
 - `strict`: unknown fields are rejected
-- `flexible`: unknown fields are accepted and stored under `_extra_fields`
+- `flexible`: unknown fields are accepted and stored as top-level keys (original field names)
 
 Use `strict` for controlled integrations and `flexible` for evolving forms.
 
