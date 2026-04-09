@@ -41,6 +41,11 @@ const docMeta: Record<string, { title: string; description: string }> = {
         description:
             "Send emails using stored templates with dynamic {{variable}} substitution.",
     },
+    forms: {
+        title: "MailZeno Forms",
+        description:
+            "Build, embed, and manage hosted forms with schema validation, anti-spam protections, and public submissions.",
+    },
     sdk: {
         title: "SDK Usage",
         description:

@@ -72,6 +72,11 @@ Every API response includes rate limit information in the response headers:
   </tbody>
 </table>
 
+<Callout type="info" title="Forms endpoints">
+Public Forms submission endpoints also return the same headers, but use the dedicated `form` limiter scope (per form + client IP).
+See [MailZeno Forms](/forms) for endpoint details.
+</Callout>
+
 ### Example response headers
 
 <CodeBlock language="http">

@@ -57,7 +57,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                       <Link
                         href={item.href}
                         onClick={onClose}
-                        className={`flex items-center gap-2 py-2 sm:py-1.5 px-5 sm:px-6 text-lg leading-relaxed no-underline transition-all duration-150  ${
+                        className={`flex items-center gap-2 py-2 sm:py-1.5 px-5 sm:px-6 leading-relaxed no-underline transition-all duration-150  ${
                           isActive
                             ? "font-semibold text-accent-secondary rounded-md mx-2 bg-accent-muted"
                             : "font-semibold text-text-secondary  rounded-md mx-2 bg-transparent border-r-transparent hover:text-text-primary hover:bg-bg-hover active:bg-bg-active"
