@@ -40,7 +40,7 @@
   }
 
   var DEFAULT_ENDPOINT = resolveDefaultEndpoint();
-  var SDK_VERSION = "2.0.0";
+  var SDK_VERSION = "2.1.0";
   var schemaCache = {};
 
   function toAbsoluteUrl(pathOrUrl) {
@@ -60,6 +60,35 @@
     return String(value || "")
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
+  }
+
+  function resolveAliasKey(value) {
+    var normalized = normalizeKey(value);
+    if (!normalized) return "";
+
+    var aliasGroups = {
+      name: ["fullname", "full_name", "yourname", "contactname", "username", "first_name"],
+      email: ["emailaddress", "email_address", "mail", "contactemail"],
+      phone: ["phonenumber", "phone_number", "mobile", "mobile_number", "telephone", "tel", "contactnumber"],
+      company: ["organization", "organisation", "business", "companyname", "company_name"],
+      message: ["msg", "comment", "comments", "description", "details", "inquiry", "enquiry"],
+      subject: ["topic", "title"],
+    };
+
+    var canonicalKeys = Object.keys(aliasGroups);
+    for (var i = 0; i < canonicalKeys.length; i += 1) {
+      var canonical = canonicalKeys[i];
+      if (normalizeKey(canonical) === normalized) return canonical;
+
+      var aliases = aliasGroups[canonical] || [];
+      for (var j = 0; j < aliases.length; j += 1) {
+        if (normalizeKey(aliases[j]) === normalized) {
+          return canonical;
+        }
+      }
+    }
+
+    return "";
   }
 
   function splitTokens(value) {
@@ -174,6 +203,15 @@
     });
   }
 
+  function getApiOriginFromEndpoint(endpoint) {
+    try {
+      var parsed = new URL(endpoint || DEFAULT_ENDPOINT, w.location.origin);
+      return parsed.origin.replace(/\/$/, "");
+    } catch (_error) {
+      return String(FALLBACK_SERVICE_ORIGIN).replace(/\/$/, "");
+    }
+  }
+
   function toError(message, status, response) {
     var error = new Error(message || "Form submission failed");
     error.status = status || 0;
@@ -235,11 +273,17 @@
     var exactLookup = {};
     var normalizedLookup = {};
     var rawLookup = {};
+    var aliasLookup = {};
 
     Object.keys(rawData || {}).forEach(function (rawKey) {
       exactLookup[rawKey] = rawData[rawKey];
       normalizedLookup[normalizeKey(rawKey)] = { key: rawKey, value: rawData[rawKey] };
       rawLookup[rawKey] = { key: rawKey, value: rawData[rawKey] };
+
+      var canonicalAlias = resolveAliasKey(rawKey);
+      if (canonicalAlias && !aliasLookup[canonicalAlias]) {
+        aliasLookup[canonicalAlias] = { key: rawKey, value: rawData[rawKey] };
+      }
     });
 
     schemaFields.forEach(function (field) {
@@ -271,6 +315,19 @@
         return;
       }
 
+      var aliasFromName = resolveAliasKey(fieldName);
+      var aliasFromLabel = resolveAliasKey(fieldLabel);
+      var aliasMatch =
+        (aliasFromName && aliasLookup[aliasFromName]) ||
+        (aliasFromLabel && aliasLookup[aliasFromLabel]) ||
+        null;
+
+      if (aliasMatch && !consumedKeys[aliasMatch.key]) {
+        result[fieldName] = aliasMatch.value;
+        consumedKeys[aliasMatch.key] = true;
+        return;
+      }
+
       var fuzzy = findBestFuzzyMatch(normalizedFieldName, normalizedLookup);
       if (fuzzy) {
         result[fieldName] = fuzzy.value;
@@ -278,7 +335,9 @@
         return;
       }
 
-      var semantic = findBestSemanticMatch(fieldName, rawLookup);
+      var semantic =
+        findBestSemanticMatch(fieldName, rawLookup) ||
+        (fieldLabel ? findBestSemanticMatch(fieldLabel, rawLookup) : null);
       if (semantic && !consumedKeys[semantic.key]) {
         result[fieldName] = semantic.value;
         consumedKeys[semantic.key] = true;
@@ -297,12 +356,18 @@
   async function getFormSchema(slug, endpoint) {
     if (!slug) return null;
 
-    var cacheKey = endpoint + "::" + slug;
+    var resolvedEndpoint = toAbsoluteUrl(endpoint || DEFAULT_ENDPOINT);
+    var cacheKey = resolvedEndpoint + "::" + slug;
     if (schemaCache[cacheKey]) {
       return schemaCache[cacheKey];
     }
 
-    var response = await fetch(toAbsoluteUrl("/api/v1/forms/" + encodeURIComponent(slug)), {
+    var schemaUrl =
+      getApiOriginFromEndpoint(resolvedEndpoint) +
+      "/api/v1/forms/" +
+      encodeURIComponent(slug);
+
+    var response = await fetch(schemaUrl, {
       method: "GET",
       credentials: "omit",
     });

@@ -117,13 +117,12 @@ export default async function FormDetailPage({
     settings?.schema_mode === "flexible" ? "flexible" : "strict";
 
   const embedScript = `${appUrl}/api/v1/forms/embed/${form.slug}`;
-  const sdkScript = `${appUrl}/mz.forms.js`;
-  const jsDelivrSdkScript =
-    process.env.NEXT_PUBLIC_FORMS_SDK_CDN_URL ||
-    "https://cdn.jsdelivr.net/gh/mailzeno/mailzeno@main/apps/web/public/mz.forms.js";
+  const sdkScriptBase =
+    process.env.NEXT_PUBLIC_FORMS_SDK_CDN_URL || `${appUrl}/mz.forms.js`;
+  const sdkScript = `${sdkScriptBase}${sdkScriptBase.includes("?") ? "&" : "?"}v=2.1.0`;
 
   const embedSnippet = `<div data-mailzeno-form="${form.slug}" data-height="680px"></div>\n<script src="${embedScript}" async></script>`;
-  const autoSubmitSnippet = `<script src="${jsDelivrSdkScript}" defer></script>\n\n<form\n  data-mz-form-slug="${form.slug}"\n  data-mz-public-key="${publicApiKey}"\n  data-mz-success-message="Thanks. We received your request."\n>\n  <input name="name" placeholder="Name" required />\n  <input name="email" type="email" placeholder="Email" required />\n  <!-- add custom fields here (strict mode rejects unknown fields) --> \n  <button type="submit" data-loading-text="Submitting...">Submit</button>\n</form>\n\n<p data-mz-success hidden></p>\n<p data-mz-error hidden></p>`;
+  const autoSubmitSnippet = `<script src="${sdkScript}" defer></script>\n\n<form\n  data-mz-form-slug="${form.slug}"\n  data-mz-public-key="${publicApiKey}"\n  data-mz-success-message="Thanks. We received your request."\n>\n  <input name="name" placeholder="Name" required />\n  <input name="email" type="email" placeholder="Email" required />\n  <!-- add custom fields here (strict mode rejects unknown fields) --> \n  <button type="submit" data-loading-text="Submitting...">Submit</button>\n</form>\n\n<p data-mz-success hidden></p>\n<p data-mz-error hidden></p>`;
   const statusLabel = form.is_active === false ? "Inactive" : "Active";
 
   return (
