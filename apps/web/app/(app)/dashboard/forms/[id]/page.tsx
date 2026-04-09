@@ -123,7 +123,7 @@ export default async function FormDetailPage({
     "https://cdn.jsdelivr.net/gh/mailzeno/mailzeno@main/apps/web/public/mz.forms.js";
 
   const embedSnippet = `<div data-mailzeno-form="${form.slug}" data-height="680px"></div>\n<script src="${embedScript}" async></script>`;
-  const autoSubmitSnippet = `<script src="${jsDelivrSdkScript}" defer></script>\n\n<form\n  data-mz-form-slug="${form.slug}"\n  data-mz-public-key="${publicApiKey}"\n  data-mz-success-message="Thanks. We received your request."\n>\n  <input name="name" placeholder="Name" required />\n  <input name="email" type="email" placeholder="Email" required />\n  <!-- add custom fields here --> \n  <button type="submit" data-loading-text="Submitting...">Submit</button>\n</form>\n\n<p data-mz-success hidden></p>\n<p data-mz-error hidden></p>`;
+  const autoSubmitSnippet = `<script src="${jsDelivrSdkScript}" defer></script>\n\n<form\n  data-mz-form-slug="${form.slug}"\n  data-mz-public-key="${publicApiKey}"\n  data-mz-success-message="Thanks. We received your request."\n>\n  <input name="name" placeholder="Name" required />\n  <input name="email" type="email" placeholder="Email" required />\n  <!-- add custom fields here (strict mode rejects unknown fields) --> \n  <button type="submit" data-loading-text="Submitting...">Submit</button>\n</form>\n\n<p data-mz-success hidden></p>\n<p data-mz-error hidden></p>`;
   const statusLabel = form.is_active === false ? "Inactive" : "Active";
 
   return (
