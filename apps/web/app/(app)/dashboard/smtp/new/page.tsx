@@ -5,11 +5,12 @@ import { BackButton } from "@/components/ui/back-button";
 import { motion } from "framer-motion";
 import ProviderSelector from "@/features/smtp/components/ProviderSelector";
 import SMTPForm from "@/features/smtp/components/SMTPForm";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function NewSMTPPage() {
-  const [provider, setProvider] = useState("custom");
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialProvider = searchParams.get("provider") || "custom";
+  const [provider, setProvider] = useState(initialProvider);
 
   return (
     <div className="px-4 md:px-8 py-6">

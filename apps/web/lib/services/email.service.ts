@@ -20,6 +20,12 @@ interface SendEmailInput {
 const MAX_HTML_SIZE = PLAN_CONFIG.pro.maxHtmlSize;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+type GoogleOAuthSecret = {
+  type: "google_oauth";
+  refreshToken: string;
+  createdAt: string;
+};
+
 // Utility functions and validations
 
 function validateRecipients(to: string | string[]) {
@@ -39,6 +45,172 @@ function renderTemplate(
   return content.replace(/{{(.*?)}}/g, (_, key) => {
     return variables[key.trim()] ?? "";
   });
+}
+
+function parseGoogleOAuthSecret(value: string): GoogleOAuthSecret | null {
+  try {
+    const parsed = JSON.parse(value) as GoogleOAuthSecret;
+
+    if (
+      parsed?.type === "google_oauth" &&
+      typeof parsed?.refreshToken === "string" &&
+      parsed.refreshToken.trim().length > 0
+    ) {
+      return parsed;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function encodeBase64Url(value: string): string {
+  return Buffer.from(value, "utf8")
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function buildMimeMessage(params: {
+  from: string;
+  to: string | string[];
+  subject: string;
+  html?: string;
+  text?: string;
+}): string {
+  const toHeader = Array.isArray(params.to) ? params.to.join(", ") : params.to;
+  const headers = [
+    `From: ${params.from}`,
+    `To: ${toHeader}`,
+    `Subject: ${params.subject}`,
+    "MIME-Version: 1.0",
+  ];
+
+  if (params.html && params.text) {
+    const boundary = `mailzeno_${Date.now()}`;
+    return [
+      ...headers,
+      `Content-Type: multipart/alternative; boundary=\"${boundary}\"`,
+      "",
+      `--${boundary}`,
+      'Content-Type: text/plain; charset="UTF-8"',
+      "",
+      params.text,
+      "",
+      `--${boundary}`,
+      'Content-Type: text/html; charset="UTF-8"',
+      "",
+      params.html,
+      "",
+      `--${boundary}--`,
+      "",
+    ].join("\r\n");
+  }
+
+  if (params.html) {
+    return [
+      ...headers,
+      'Content-Type: text/html; charset="UTF-8"',
+      "",
+      params.html,
+      "",
+    ].join("\r\n");
+  }
+
+  return [
+    ...headers,
+    'Content-Type: text/plain; charset="UTF-8"',
+    "",
+    params.text || "",
+    "",
+  ].join("\r\n");
+}
+
+async function getGoogleAccessToken(refreshToken: string): Promise<string> {
+  const clientId = process.env.GOOGLE_SMTP_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_SMTP_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error("Google SMTP OAuth is not configured");
+  }
+
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to refresh Google token: ${errorText}`);
+  }
+
+  const tokenData = (await response.json()) as { access_token?: string };
+
+  if (!tokenData.access_token) {
+    throw new Error("Google access token was not returned");
+  }
+
+  return tokenData.access_token;
+}
+
+async function sendViaGmailApi(params: {
+  refreshToken: string;
+  from: string;
+  to: string | string[];
+  subject: string;
+  html?: string;
+  text?: string;
+}): Promise<{
+  messageId: string;
+  accepted: string[];
+  rejected: string[];
+  response: string;
+}> {
+  const accessToken = await getGoogleAccessToken(params.refreshToken);
+  const raw = encodeBase64Url(
+    buildMimeMessage({
+      from: params.from,
+      to: params.to,
+      subject: params.subject,
+      html: params.html,
+      text: params.text,
+    }),
+  );
+
+  const response = await fetch(
+    "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ raw }),
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gmail API send failed: ${errorText}`);
+  }
+
+  const data = (await response.json()) as { id?: string };
+  const accepted = Array.isArray(params.to) ? params.to : [params.to];
+
+  return {
+    messageId: data.id || `gmail_${Date.now()}`,
+    accepted,
+    rejected: [],
+    response: "Gmail API accepted",
+  };
 }
 
 // Main service function
@@ -164,26 +336,46 @@ export async function sendEmailService(input: SendEmailInput) {
       smtp.password_encrypted,
     );
 
-    const smtpConfig: SMTPConfig = {
-      id: smtp.id,
-      host: smtp.host,
-      port: smtp.port,
-      secure: smtp.secure,
-      user: smtp.username,
-      pass: decryptedPassword,
-    };
-
-    // Send the email
     const from = `${smtp.from_name || "MailZeno"} <${smtp.username}>`;
+    const oauthSecret = parseGoogleOAuthSecret(decryptedPassword);
 
-    const result = await sendEmail(smtpConfig, {
-      type: "raw",
-      from,
-      to: input.to,
-      subject: finalSubject,
-      html: finalHtml,
-      text: input.text,
-    });
+    let result:
+      | {
+          messageId: string;
+          accepted: string[];
+          rejected: string[];
+          response: string;
+        }
+      | undefined;
+
+    if (oauthSecret) {
+      result = await sendViaGmailApi({
+        refreshToken: oauthSecret.refreshToken,
+        from,
+        to: input.to,
+        subject: finalSubject,
+        html: finalHtml,
+        text: input.text,
+      });
+    } else {
+      const smtpConfig: SMTPConfig = {
+        id: smtp.id,
+        host: smtp.host,
+        port: smtp.port,
+        secure: smtp.secure,
+        user: smtp.username,
+        pass: decryptedPassword,
+      };
+
+      result = await sendEmail(smtpConfig, {
+        type: "raw",
+        from,
+        to: input.to,
+        subject: finalSubject,
+        html: finalHtml,
+        text: input.text,
+      });
+    }
 
     // Log the email with retention policy
     const safeHtml =

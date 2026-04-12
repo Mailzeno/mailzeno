@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SMTP_PROVIDERS } from "../config/providers";
 import { useToast } from "@/components/ui/use-toast";
 import { Check, ChevronDown, Shield } from "lucide-react";
@@ -14,12 +14,46 @@ interface Props {
 
 export default function SMTPForm({ provider }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState("ap-south-1");
   const [username, setUsername] = useState("");
+  const isGmail = provider === "gmail";
 
   const config = SMTP_PROVIDERS.find((p) => p.id === provider);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (!error) {
+      return;
+    }
+
+    const errorMessages: Record<string, string> = {
+      missing_fields: "Please fill account name and from name before continuing.",
+      google_oauth_not_configured:
+        "Google OAuth credentials are not configured on the server.",
+      oauth_invalid_request: "Google OAuth request is invalid. Please try again.",
+      oauth_state_mismatch: "OAuth state validation failed. Please try again.",
+      token_exchange_failed: "Failed to complete Google token exchange.",
+      missing_refresh_token:
+        "Google did not return a refresh token. Re-authorize with consent.",
+      userinfo_failed: "Failed to fetch your Google account details.",
+      email_missing: "Google account email could not be resolved.",
+      smtp_create_failed: "Failed to save Gmail SMTP account.",
+    };
+
+    toast({
+      title: "Google connection failed",
+      description: errorMessages[error] || "Unable to connect Gmail. Please try again.",
+      variant: "destructive",
+    });
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("error");
+    const nextQuery = params.toString();
+    router.replace(nextQuery ? `?${nextQuery}` : "?");
+  }, [searchParams, toast, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,8 +61,31 @@ export default function SMTPForm({ provider }: Props) {
 
     const form = new FormData(e.currentTarget);
 
+    const accountName = String(form.get("name") || "").trim();
+    const fromName = String(form.get("from_name") || "").trim();
+
+    if (!accountName || !fromName) {
+      toast({
+        title: "Missing required fields",
+        description: "Please provide account name and from name.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (isGmail) {
+      const params = new URLSearchParams({
+        name: accountName,
+        from_name: fromName,
+      });
+
+      window.location.href = `/api/smtp/google/authorize?${params.toString()}`;
+      return;
+    }
+
     const body = {
-      name: form.get("name"),
+      name: accountName,
       host:
         provider === "custom"
           ? form.get("host")
@@ -39,8 +96,8 @@ export default function SMTPForm({ provider }: Props) {
       port: provider === "custom" ? Number(form.get("port")) : config?.port,
       username: form.get("username"),
       password: form.get("password"),
-      from_email: form.get("from_email"),
-      from_name: form.get("from_name"),
+      from_email: form.get("username"),
+      from_name: fromName,
       secure: config?.secure ?? true,
     };
 
@@ -102,21 +159,31 @@ export default function SMTPForm({ provider }: Props) {
         <FormField label="User Email">
           <input
             name="username"
-            required
+            required={!isGmail}
+            disabled={isGmail}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="smtp-input"
+            className={`smtp-input ${isGmail ? "opacity-60 cursor-not-allowed" : ""}`}
+            placeholder={isGmail ? "Will be fetched from Google" : ""}
           />
         </FormField>
 
-        <FormField label="App Password">
-          <input
-            type="password"
-            name="password"
-            required
-            className="smtp-input"
-          />
-        </FormField>
+        {isGmail ? (
+          <FormField label="Google OAuth (Send-only)">
+            <div className="smtp-input flex items-center text-sm text-muted-foreground">
+              Click Continue with Google to authorize Gmail send-only access.
+            </div>
+          </FormField>
+        ) : (
+          <FormField label="App Password">
+            <input
+              type="password"
+              name="password"
+              required
+              className="smtp-input"
+            />
+          </FormField>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -144,7 +211,7 @@ export default function SMTPForm({ provider }: Props) {
         disabled={loading}
         className="px-6 py-2.5 rounded-md bg-primary text-secondary-foreground text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
       >
-        {loading ? "Connecting..." : "Connect SMTP"}
+        {loading ? "Connecting..." : isGmail ? "Continue with Google" : "Connect SMTP"}
       </Button>
     </form>
   );
