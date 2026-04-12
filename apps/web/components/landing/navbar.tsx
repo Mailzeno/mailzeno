@@ -60,8 +60,8 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur border-b ">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6 ">
+    <header className="sticky top-0 z-50 backdrop-blur ">
+      <div className={`mx-auto flex h-16 max-w-5xl items-center justify-between px-6 ${mobileOpen ? "" : "border-b"} `}>
         {/* Logo */}
         <Link href="/" className="flex items-center text-2xl font-extrabold">
           <img src="/logo.svg" alt="Logo" className="h-12" />

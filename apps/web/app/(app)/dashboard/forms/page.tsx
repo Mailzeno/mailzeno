@@ -6,6 +6,17 @@ import { Plus, FileText, Copy, Trash2, Check, ArrowRight, Pencil } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Form = {
   id: string;
@@ -125,11 +136,6 @@ export default function FormsPage() {
   }
 
   async function handleDelete(form: Form) {
-    const confirmed = window.confirm(
-      `Delete \"${form.name}\"? This action cannot be undone.`
-    );
-    if (!confirmed) return;
-
     setDeletingId(form.id);
     try {
       const res = await fetch("/api/v1/forms", {
@@ -334,17 +340,41 @@ function FormsTable({
               )}
             </button>
 
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                void onDelete(form);
-              }}
-              disabled={deletingId === form.id}
-              aria-label={`Delete ${form.name}`}
-              className="p-2 rounded-lg hover:bg-muted transition disabled:opacity-50"
-            >
-              <Trash2 className="w-4 h-4 text-red-500" />
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                  disabled={deletingId === form.id}
+                  aria-label={`Delete ${form.name}`}
+                  className="p-2 rounded-lg hover:bg-muted transition disabled:opacity-50"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete form?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete "{form.name}" and its related
+                    data. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    disabled={deletingId === form.id}
+                    onClick={() => {
+                      void onDelete(form);
+                    }}
+                  >
+                    {deletingId === form.id ? "Deleting..." : "Delete"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       ))}

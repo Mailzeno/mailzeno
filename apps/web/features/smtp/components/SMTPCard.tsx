@@ -132,8 +132,9 @@ export default function SMTPCard({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
+                   variant="destructive"
                   onClick={() => onDelete(smtp.id)}
-                  className="bg-red-600 hover:bg-red-700"
+                  className=""
                 >
                   Delete
                 </AlertDialogAction>

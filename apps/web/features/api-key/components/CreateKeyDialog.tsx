@@ -34,6 +34,9 @@ export function CreateKeyDialog({ onRefresh }: CreateKeyDialogProps) {
       if (!res.ok) throw new Error(json.error || "Failed")
 
       setNewKey(json.apiKey)
+      if (typeof window !== "undefined" && json.apiKey) {
+        window.localStorage.setItem("mailzeno_active_api_key", json.apiKey)
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {

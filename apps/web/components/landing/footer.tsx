@@ -74,6 +74,25 @@ export function Footer() {
                 Blog
               </Link>
             </div>
+
+            {/* Legal */}
+            <div className="flex flex-col gap-2 min-w-[120px]">
+              <span className="font-medium text-lg text-foreground">
+                Legal
+              </span>
+              <Link
+                href="/terms"
+                className="text-muted-foreground hover:text-foreground transition"
+              >
+                Terms
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-muted-foreground hover:text-foreground transition"
+              >
+                Privacy
+              </Link>
+            </div>
           </div>
 
           {/* Right Utility */}

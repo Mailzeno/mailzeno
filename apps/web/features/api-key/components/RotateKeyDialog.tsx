@@ -29,6 +29,9 @@ export function RotateKeyDialog({ onRefresh }: Props) {
 
     if (res.ok) {
       setNewKey(json.apiKey)
+      if (typeof window !== "undefined" && json.apiKey) {
+        window.localStorage.setItem("mailzeno_active_api_key", json.apiKey)
+      }
     }
 
     setLoading(false)
