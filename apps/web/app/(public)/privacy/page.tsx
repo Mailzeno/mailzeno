@@ -154,16 +154,50 @@ export default function PrivacyPolicyPage() {
               </p>
             </article>
 
-            <article id="third-party" className="border-t pt-8">
-              <h2 className="text-2xl font-semibold text-foreground">
-                6. Third-Party Services
-              </h2>
-              <p className="mt-3">
-                MailZeno uses trusted providers for hosting, authentication,
-                analytics, and infrastructure. Those providers process data under
-                their own policies and contractual obligations.
-              </p>
-            </article>
+           <article id="third-party" className="border-t pt-8">
+  <h2 className="text-2xl font-semibold text-foreground">
+    6. Third-Party Services and Google User Data
+  </h2>
+
+  <div className="mt-3 space-y-3">
+    <p>
+      When you connect a Google Account to MailZeno, MailZeno may access
+      Google user data that is necessary to authenticate your account and
+      provide email-sending functionality. This may include your Google
+      Account email address, authentication information, OAuth access
+      tokens, refresh tokens, and other data covered by the permissions
+      you authorize.
+    </p>
+
+    <p>
+      MailZeno does not sell, rent, or transfer Google user data to
+      advertising platforms, data brokers, or other third parties for
+      advertising or unrelated purposes.
+    </p>
+
+    <p>
+      Google user data may be processed or transferred only to service
+      providers that are necessary to operate, secure, and provide
+      MailZeno's user-facing functionality, and only for the purposes
+      described in this Privacy Policy. Such providers are required to
+      protect the data and may not use Google user data for their own
+      independent purposes.
+    </p>
+
+    <p>
+      MailZeno may also disclose Google user data when required by
+      applicable law, to protect the security of MailZeno and its users,
+      or in connection with a merger, acquisition, or sale of assets
+      where permitted by applicable law and Google's policies.
+    </p>
+
+    <p>
+      MailZeno's use of information received from Google APIs will adhere
+      to the Google API Services User Data Policy, including the Limited
+      Use requirements.
+    </p>
+  </div>
+</article>
 
             <article id="transfers" className="border-t pt-8">
               <h2 className="text-2xl font-semibold text-foreground">
