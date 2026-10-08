@@ -141,7 +141,7 @@ export async function generateEmailAI({
   const userInput = validateInput(type, prompt, content);
 
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+   model: process.env.GROQ_MODEL,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userInput },
