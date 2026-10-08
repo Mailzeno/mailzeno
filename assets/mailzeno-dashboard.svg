@@ -1,0 +1,259 @@
+<svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#021611"/>
+      <stop offset="0.45" stop-color="#05281f"/>
+      <stop offset="1" stop-color="#04160f"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(550 160) rotate(90) scale(700 1000)">
+      <stop stop-color="#31F2B0" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#31F2B0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1060 840) rotate(90) scale(700 1200)">
+      <stop stop-color="#34E9C2" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#34E9C2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cardGrad" x1="200" y1="150" x2="1350" y2="840" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050C12"/>
+      <stop offset="1" stop-color="#020B0F"/>
+    </linearGradient>
+    <linearGradient id="greenLine" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#47FFB5"/>
+      <stop offset="1" stop-color="#1BEBC7"/>
+    </linearGradient>
+    <linearGradient id="chipGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0B3D34"/>
+      <stop offset="1" stop-color="#07281F"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="bigGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="980" fill="url(#bg)"/>
+  <circle cx="560" cy="150" r="600" fill="url(#glow1)"/>
+  <circle cx="1120" cy="900" r="680" fill="url(#glow2)"/>
+
+  <path d="M-60 250C130 180 150 370 290 370C430 370 520 250 610 250C700 250 735 350 870 350C980 350 1040 270 1130 230C1220 190 1330 205 1550 300V980H-60V250Z" fill="none" stroke="url(#greenLine)" stroke-width="4" opacity="0.85" filter="url(#bigGlow)"/>
+  <path d="M-60 680C120 600 240 770 360 765C480 760 560 570 720 610C820 640 930 750 1040 760C1210 770 1360 630 1550 690" fill="none" stroke="url(#greenLine)" stroke-width="5" opacity="0.8" filter="url(#bigGlow)"/>
+
+  <g transform="translate(168 100)">
+    <rect x="0" y="0" width="1264" height="780" rx="34" fill="url(#cardGrad)" stroke="rgba(91,255,203,0.30)"/>
+    <rect x="0" y="0" width="1264" height="780" rx="34" fill="rgba(255,255,255,0.01)"/>
+
+    <rect x="0" y="0" width="298" height="780" rx="34" fill="rgba(6,18,18,0.86)"/>
+    <rect x="0" y="0" width="298" height="780" rx="34" fill="rgba(255,255,255,0.01)"/>
+
+    <rect x="20" y="18" width="250" height="52" rx="18" fill="rgba(255,255,255,0.01)"/>
+    <g transform="translate(36 22)">
+      <path d="M18 16L10 24V34H26V24L18 16ZM18 18L24 24H12L18 18ZM16 28V26H20V28H16Z" fill="#0BFFE0"/>
+      <path d="M22 16V8H28V14L22 16Z" fill="#0BFFE0" opacity="0.9"/>
+      <path d="M14 16V8H8V14L14 16Z" fill="#0BFFE0" opacity="0.75"/>
+      <path d="M14 32V22H20V32H14Z" fill="#0BFFE0" opacity="0.7"/>
+    </g>
+    <text x="68" y="53" fill="#E7F9F4" font-family="Arial, sans-serif" font-size="28" font-weight="700">mailzeno</text>
+
+    <g transform="translate(28 112)">
+      <rect x="0" y="0" width="232" height="42" rx="12" fill="rgba(124,255,223,0.08)" stroke="rgba(71,255,187,0.2)"/>
+      <g transform="translate(18 10)">
+        <rect x="0" y="0" width="18" height="18" rx="4" fill="rgba(104,255,208,0.18)"/>
+        <path d="M4 6H14M4 9H14M4 12H11" stroke="#70F3D8" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+      <text x="52" y="27" fill="#ECF7F4" font-family="Arial, sans-serif" font-size="18" font-weight="700">Dashboard</text>
+    </g>
+
+    <g transform="translate(28 170)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M3 10C3 7.79 4.79 6 7 6H13C15.21 6 17 7.79 17 10V14C17 16.21 15.21 18 13 18H7C4.79 18 3 16.21 3 14V10Z" stroke="#A8D4CC" stroke-width="1.7"/>
+        <path d="M9 10H13" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Send Email</text>
+    </g>
+
+    <g transform="translate(28 238)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M6 16V8H17L20 11V16" stroke="#A8D4CC" stroke-width="1.7" stroke-linejoin="round"/>
+        <path d="M6 8V6H17L20 9V11" stroke="#A8D4CC" stroke-width="1.7" stroke-linejoin="round"/>
+        <path d="M8 14H15" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Forms</text>
+    </g>
+
+    <g transform="translate(28 330)">
+      <text x="0" y="0" fill="#5D7A77" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1.7">CONFIGURATION</text>
+    </g>
+
+    <g transform="translate(28 370)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M5 15L14 6L19 11L26 4" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M23 4H26V7" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Templates</text>
+    </g>
+
+    <g transform="translate(28 430)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <rect x="3" y="6" width="18" height="12" rx="2" stroke="#A8D4CC" stroke-width="1.7"/>
+        <path d="M3 9H21" stroke="#A8D4CC" stroke-width="1.7"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">SMTP</text>
+    </g>
+
+    <g transform="translate(28 520)">
+      <text x="0" y="0" fill="#5D7A77" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1.7">ANALYTICS</text>
+    </g>
+
+    <g transform="translate(28 560)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M8 15V7M13 15V4M18 15V10" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Logs</text>
+    </g>
+
+    <g transform="translate(28 620)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M6 9H16V16H6V9Z" stroke="#A8D4CC" stroke-width="1.7"/>
+        <path d="M9 9V6H13V9" stroke="#A8D4CC" stroke-width="1.7"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Form Submissions</text>
+    </g>
+
+    <g transform="translate(28 680)">
+      <rect x="0" y="0" width="232" height="44" rx="12" fill="rgba(255,255,255,0.01)"/>
+      <g transform="translate(18 12)">
+        <path d="M5 15H17M9 15V9M13 15V6" stroke="#A8D4CC" stroke-width="1.7" stroke-linecap="round"/>
+      </g>
+      <text x="52" y="29" fill="#D8E7E4" font-family="Arial, sans-serif" font-size="18" font-weight="600">Usage</text>
+    </g>
+
+    <text x="44" y="757" fill="#6A8B86" font-family="Arial, sans-serif" font-size="14">v0.1.0 web</text>
+
+    <g transform="translate(326 26)">
+      <rect x="0" y="0" width="914" height="48" rx="18" fill="rgba(15,20,24,0.8)" stroke="rgba(90,255,208,0.18)"/>
+      <g transform="translate(24 14)">
+        <circle cx="9" cy="9" r="7" stroke="#66F1C7" stroke-width="2" fill="none"/>
+        <path d="M14 14L20 20" stroke="#66F1C7" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <text x="48" y="31" fill="#8C9E9A" font-family="Arial, sans-serif" font-size="18">Search...</text>
+      <g transform="translate(820 6)">
+        <circle cx="16" cy="18" r="15" fill="#1A2C2B"/>
+        <path d="M12 21C12 18.24 14.24 16 17 16C19.76 16 22 18.24 22 21" stroke="#D0F3ED" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="17" cy="14" r="4" stroke="#D0F3ED" stroke-width="2" fill="none"/>
+      </g>
+      <g transform="translate(730 9)">
+        <rect x="0" y="0" width="44" height="30" rx="10" fill="rgba(255,255,255,0.03)"/>
+        <path d="M11 10H22" stroke="#79F4D0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M11 15H22" stroke="#79F4D0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M11 20H19" stroke="#79F4D0" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <g transform="translate(778 8)">
+        <rect x="0" y="0" width="30" height="30" rx="8" fill="rgba(255,255,255,0.03)"/>
+        <circle cx="15" cy="15" r="8" stroke="#79F4D0" stroke-width="2" fill="none"/>
+      </g>
+    </g>
+
+    <g transform="translate(330 124)">
+      <text x="0" y="0" fill="#EAF9F5" font-family="Arial, sans-serif" font-size="52" font-weight="700">Dashboard</text>
+      <text x="0" y="48" fill="#9AB7B1" font-family="Arial, sans-serif" font-size="22">Monitor your email infrastructure at a glance.</text>
+      <rect x="0" y="74" width="170" height="10" rx="5" fill="rgba(255,255,255,0.05)"/>
+      <rect x="0" y="74" width="105" height="10" rx="5" fill="url(#greenLine)"/>
+      <text x="0" y="118" fill="#B8D4CF" font-family="Arial, sans-serif" font-size="16">Free Plan</text>
+      <text x="142" y="118" fill="#9FF5D0" font-family="Arial, sans-serif" font-size="16" font-weight="700">67 / 100</text>
+    </g>
+
+    <g transform="translate(330 210)">
+      <g transform="translate(0 0)">
+        <rect x="0" y="0" width="230" height="176" rx="18" fill="rgba(14,22,28,0.88)" stroke="rgba(80,255,194,0.12)"/>
+        <rect x="22" y="20" width="52" height="52" rx="12" fill="rgba(81,148,201,0.18)"/>
+        <path d="M34 41H58" stroke="#75D8FF" stroke-width="2" stroke-linecap="round"/>
+        <path d="M41 34H50" stroke="#75D8FF" stroke-width="2" stroke-linecap="round"/>
+        <path d="M36 52H50" stroke="#75D8FF" stroke-width="2" stroke-linecap="round"/>
+        <text x="28" y="118" fill="#ECF9F8" font-family="Arial, sans-serif" font-size="68" font-weight="700">45</text>
+        <text x="32" y="152" fill="#98B0AC" font-family="Arial, sans-serif" font-size="20">Emails Today</text>
+      </g>
+
+      <g transform="translate(260 0)">
+        <rect x="0" y="0" width="230" height="176" rx="18" fill="rgba(14,22,28,0.88)" stroke="rgba(80,255,194,0.12)"/>
+        <rect x="22" y="22" width="52" height="52" rx="12" fill="rgba(166,104,255,0.18)"/>
+        <path d="M32 46H50V60H32V46Z" stroke="#C184FF" stroke-width="2"/>
+        <path d="M36 42V36H46V42" stroke="#C184FF" stroke-width="2"/>
+        <text x="35" y="118" fill="#ECF9F8" font-family="Arial, sans-serif" font-size="68" font-weight="700">4</text>
+        <text x="20" y="152" fill="#98B0AC" font-family="Arial, sans-serif" font-size="20">SMTP Accounts</text>
+      </g>
+
+      <g transform="translate(520 0)">
+        <rect x="0" y="0" width="230" height="176" rx="18" fill="rgba(14,22,28,0.88)" stroke="rgba(80,255,194,0.12)"/>
+        <rect x="22" y="22" width="52" height="52" rx="12" fill="rgba(255,196,66,0.18)"/>
+        <path d="M42 42H58V53H42V42Z" stroke="#F6CE66" stroke-width="2"/>
+        <path d="M36 56H44V62H36V56Z" stroke="#F6CE66" stroke-width="2"/>
+        <path d="M54 56H60V62H54V56Z" stroke="#F6CE66" stroke-width="2"/>
+        <text x="12" y="118" fill="#ECF9F8" font-family="Arial, sans-serif" font-size="62" font-weight="700">3</text>
+        <text x="38" y="152" fill="#98B0AC" font-family="Arial, sans-serif" font-size="20">Templates</text>
+      </g>
+
+      <g transform="translate(780 0)">
+        <rect x="0" y="0" width="230" height="176" rx="18" fill="rgba(14,22,28,0.88)" stroke="rgba(80,255,194,0.12)"/>
+        <circle cx="52" cy="52" r="22" fill="rgba(110,255,211,0.18)"/>
+        <path d="M53 39L61 47L71 34" stroke="#7EF6CF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="30" y="118" fill="#ECF9F8" font-family="Arial, sans-serif" font-size="58" font-weight="700">100%</text>
+        <text x="52" y="152" fill="#98B0AC" font-family="Arial, sans-serif" font-size="20">Delivery Rate</text>
+      </g>
+    </g>
+
+    <g transform="translate(330 430)">
+      <rect x="0" y="0" width="920" height="250" rx="18" fill="rgba(14,22,28,0.88)" stroke="rgba(80,255,194,0.12)"/>
+      <text x="28" y="52" fill="#A8C4C0" font-family="Arial, sans-serif" font-size="24">Email Activity (7 Days)</text>
+      <text x="760" y="52" fill="#BCF6D6" font-family="Arial, sans-serif" font-size="18">7D</text>
+      <text x="800" y="52" fill="#6F8A87" font-family="Arial, sans-serif" font-size="18">30D</text>
+      <g transform="translate(20 68)">
+        <text x="0" y="0" fill="#8A9F9D" font-family="Arial, sans-serif" font-size="18">200</text>
+        <text x="0" y="70" fill="#8A9F9D" font-family="Arial, sans-serif" font-size="18">150</text>
+        <text x="0" y="140" fill="#8A9F9D" font-family="Arial, sans-serif" font-size="18">100</text>
+        <text x="0" y="210" fill="#8A9F9D" font-family="Arial, sans-serif" font-size="18">50</text>
+        <text x="0" y="270" fill="#8A9F9D" font-family="Arial, sans-serif" font-size="18">0</text>
+      </g>
+
+      <g transform="translate(80 22)">
+        <text x="0" y="146" fill="#ECF9F8" font-family="Arial, sans-serif" font-size="54" font-weight="700">58</text>
+        <text x="72" y="146" fill="#9FF5D0" font-family="Arial, sans-serif" font-size="18" font-weight="600">▲ +99% from yesterday</text>
+      </g>
+
+      <g transform="translate(100 70)">
+        <path d="M0 175 C30 130, 60 125, 90 145 S150 170, 180 130 S270 105, 330 155 S430 188, 500 125 S620 150, 700 110 S820 130, 860 65 L860 240 L0 240 Z" fill="url(#greenLine)" opacity="0.18"/>
+        <path d="M0 175 C30 130, 60 125, 90 145 S150 170, 180 130 S270 105, 330 155 S430 188, 500 125 S620 150, 700 110 S820 130, 860 65" stroke="url(#greenLine)" stroke-width="4" fill="none"/>
+      </g>
+
+      <g transform="translate(100 220)">
+        <text x="0" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">15 Jul</text>
+        <text x="112" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">16 Jul</text>
+        <text x="224" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">17 Jul</text>
+        <text x="336" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">18 Jul</text>
+        <text x="448" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">19 Jul</text>
+        <text x="560" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">20 Jul</text>
+        <text x="672" y="12" fill="#8AA4A2" font-family="Arial, sans-serif" font-size="18">21 Jul</text>
+      </g>
+    </g>
+
+    <g transform="translate(1100 740)">
+      <rect x="0" y="0" width="118" height="28" rx="9" fill="rgba(255,255,255,0.04)"/>
+      <text x="15" y="19" fill="#7B9592" font-family="Arial, sans-serif" font-size="14">Send Email</text>
+    </g>
+  </g>
+</svg>
