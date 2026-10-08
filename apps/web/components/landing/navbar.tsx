@@ -80,7 +80,7 @@ export function Navbar() {
           </Link>
 
           <Link
-            href="https://github.com"
+            href="https://github.com/mailzeno/mailzeno"
             className="flex items-center gap-1 hover:text-foreground hover:bg-muted rounded-full px-2 py-1"
           >
             <Github className="h-4 w-4" /> GitHub
