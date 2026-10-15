@@ -1,5 +1,9 @@
 # MailZeno
 
+ <p align="center">
+  <img src="assets/dashboard.png" alt="MailZeno Dashboard" width="100%" />
+</p> 
+
 ![npm version](https://img.shields.io/npm/v/@mailzeno/client)
 ![npm downloads](https://img.shields.io/npm/dm/@mailzeno/client)
 ![license](https://img.shields.io/npm/l/@mailzeno/client)
