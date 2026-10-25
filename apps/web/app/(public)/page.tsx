@@ -10,6 +10,7 @@ import { OpenSourceSection } from "@/components/landing/openSource"
 import { IntegrateSection } from "@/components/landing/IntegrateSection"
 import { LogoPatternDivider } from "@/components/landing/logo-divider"
 import { UpcomingFeature } from "@/components/landing/upcomingFeat"
+import { SmoothScroll } from "@/components/smooth-scroll"
 
 import type { Metadata } from "next";
 
@@ -54,16 +55,18 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <FeatureDuo />
-      <FrameworkSupport />
-      <AssistantSystem />
-      <OpenSourceSection />
-      <IntegrateSection />
-      <Features />
-      <CTA />
-      <UpcomingFeature />
-    </main>
+    <SmoothScroll>
+      <main>
+        <Hero />
+        <FeatureDuo />
+        <FrameworkSupport />
+        <AssistantSystem />
+        <OpenSourceSection />
+        <IntegrateSection />
+        <Features />
+        <CTA />
+        <UpcomingFeature />
+      </main>
+    </SmoothScroll>
   )
 }

@@ -67,12 +67,6 @@ export function Footer() {
               >
                 Roadmap
               </Link>
-              <Link
-                href="/blog"
-                className="text-muted-foreground hover:text-foreground transition"
-              >
-                Blog
-              </Link>
             </div>
 
             {/* Legal */}
